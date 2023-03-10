@@ -15,8 +15,9 @@ def main():
                      names=['X', 'Y', 'Weight', 'Info'])
     print(df)
     
-    # Remove the curly braces from the weight column
+    # Remove the curly braces from the weight column and convert to int
     df["Weight"] = df['Weight'].str.replace(r'{|}', '', regex=True)
+    df = df.astype({'Weight': 'int32'})
     print(df)
     
     # Create the updated manifest file
