@@ -6,14 +6,12 @@ def main():
     file_name = ''
     
     # Get the manifest file from the user
-    '''file_name = str(input('Enter the name of the manifest file: '))'''
+    file_name = str(input('Enter the name of the manif file: '))
     
-    # Read the manifeset file into a dataframe
-    '''df = pd.read_csv(file_name, sep=',', header=None, 
-                     names=['Coord', 'Weight', 'Container'])'''
-    manifest = pd.read_csv('ShipCase1.txt', sep=' ', header=None, 
-                     names=['XY', 'Weight', 'Info'])
-    df = pd.read_csv('ShipCase1.txt', sep=',', header=None, 
+    # Read the manifest file into a dataframe
+    manif = pd.read_csv(file_name, sep=',', header=None, 
+                     names=['X', 'Y', 'Weight', 'Info'])
+    df = pd.read_csv(file_name, sep=',', header=None, 
                      names=['X', 'Y', 'Weight', 'Info'])
     print(df)
     
@@ -22,6 +20,7 @@ def main():
     print(df)
     
     # Create the updated manifest file
-    manifest.to_csv('ShipCase1Updated.txt', header=None, index=False)
+    file_name = file_name.replace(".txt", "OUTBOUND.txt")
+    manif.to_csv(file_name, header=None, index=False)
     
 main()
