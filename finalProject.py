@@ -4,6 +4,8 @@ import numpy as np
 def main():
     # Declare variables
     file_name = ''
+    ROWS = 8
+    COLS = 12
     
     # Get the manifest file from the user
     file_name = str(input('Enter the name of the manif file: '))
