@@ -29,5 +29,7 @@ def main():
     # Create the updated manifest file
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manif.to_csv(file_name, header=None, index=False)
-    
+
+
+
 main()
