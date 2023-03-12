@@ -19,24 +19,28 @@ def main():
                      names=['X', 'Y', 'Weight', 'Info'])
     df = pd.read_csv(file_name, sep=',', header=None, 
                      names=['X', 'Y', 'Weight', 'Info'])
-    #print(df)
     
-    # Remove the curly braces from the weight column and convert to int
-    df["Weight"] = df['Weight'].str.replace(r'{|}', '', regex=True)
-    df = df.astype({'Weight': 'int32'})
-    #print(df)
+    # Clean the dataframe
+    clean_df(df)
     
-    # Convert the info column to string values and remove whitespace
-    df = df.astype({'Info': 'string'})
-    df['Info'] = df['Info'].str.strip()
+    # Build the 2d table to represent the ship
+    build_ship(ship, S_ROWS, S_COLS, df)
+    print_ship(ship, S_COLS)
     
     # Create the updated manifest file
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
-    
-    build_ship(ship, S_ROWS, S_COLS, df)
-    print_ship(ship, S_COLS)
 
+
+def clean_df(df : pd.DataFrame) -> None:
+    # Remove the curly braces from the weight column and convert to int
+    df["Weight"] = df['Weight'].str.replace(r'{|}', '', regex=True)
+    df['Weight'] = df['Weight'].astype('int32')
+    
+    # Convert the info column to string values and remove whitespace
+    df['Info'] = df['Info'].astype("string")
+    df['Info'] = df['Info'].str.strip()
+    
 
 def build_ship(ship : list[list[str]], S_ROWS : int, S_COLS : int,
                df : pd.DataFrame) -> None:
@@ -65,5 +69,6 @@ def print_bars(S_COLS : int, O_WDITH : int) -> None:
     for i in range(S_COLS * O_WDITH * 2 + 1):
         print('-', end='')
     print()
+
 
 main()
