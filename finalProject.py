@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import heapq
 
+
 def main():
     # Declare variables
     file_name = ''
@@ -55,6 +56,7 @@ def build_ship(ship : list[list[str]], S_ROWS : int, S_COLS : int,
             else:
                 ship[i][j] = df['Info'][count]
             count += 1
+
 
 def print_ship(ship : list[list[str]], S_COLS : int) -> None:
     O_WIDTH = 3
