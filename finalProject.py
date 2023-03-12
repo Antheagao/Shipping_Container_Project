@@ -10,6 +10,7 @@ def main():
     S_ROWS = 8
     S_COLS = 12
     ship = [['0' for i in range(S_COLS)] for j in range(S_ROWS)]
+    buffer = [['0' for i in range(B_COLS)] for j in range(B_ROWS)]
     
     # Get the manifest file from the user
     file_name = str(input('Enter the name of the manif file: '))
