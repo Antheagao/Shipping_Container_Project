@@ -63,3 +63,8 @@ for i in ship:
     for i in range(12 * 6 + 1):
         print('-', end='')
     print()'''
+
+# Code to access a specific element in a column of the dataframe
+'''df = pd.read_csv('ShipCase1.txt', sep=',', header=None, 
+                     names=['X', 'Y', 'Weight', 'Info'])
+print(df['Weight'][1])'''
