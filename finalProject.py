@@ -31,5 +31,10 @@ def main():
     manif.to_csv(file_name, header=None, index=False)
 
 
+def print_ship(ship : list[list[str]]) -> None:
+    for row in ship:
+        for col in row:
+            print(col, end=' ')
+        print()
 
 main()

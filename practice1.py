@@ -39,7 +39,7 @@ def sup(var : int) -> None:
 main()'''
 
 # Code to print 2d list
-'''ship = [[0 for i in range(12)] for j in range(8)]
+'''ship = [['0' for i in range(12)] for j in range(8)]
 for i in ship:
     for j in i:
         print(j, end=' ')
@@ -49,3 +49,17 @@ for i in ship:
 '''ship = [[0 for i in range(12)] for j in range(8)]
 for row in ship:
     print(row)'''
+    
+# Code to print 2d list with output formatting
+'''ship = [['0' for i in range(12)] for j in range(8)]
+ship[5][5] = 'DOG'
+for i in range(12 * 6 + 1):
+    print('-', end='')
+print()
+for i in ship:
+    for j in i:
+        print('|', j[0:3].ljust(3), end=' ')
+    print('|')
+    for i in range(12 * 6 + 1):
+        print('-', end='')
+    print()'''
