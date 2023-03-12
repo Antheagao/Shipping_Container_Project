@@ -1,11 +1,14 @@
 import pandas as pd
 import numpy as np
+import heapq
 
 def main():
     # Declare variables
     file_name = ''
-    ROWS = 8
-    COLS = 12
+    B_ROWS = 4
+    B_COLS = 24
+    S_ROWS = 8
+    S_COLS = 12
     
     # Get the manifest file from the user
     file_name = str(input('Enter the name of the manif file: '))
