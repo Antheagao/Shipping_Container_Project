@@ -9,13 +9,13 @@ def main():
     B_COLS = 24
     S_ROWS = 8
     S_COLS = 12
-    ship = [[0 for i in range(S_COLS)] for j in range(S_ROWS)]
+    ship = [['0' for i in range(S_COLS)] for j in range(S_ROWS)]
     
     # Get the manifest file from the user
     file_name = str(input('Enter the name of the manif file: '))
     
     # Read the manifest file into a dataframe
-    manif = pd.read_csv(file_name, sep=',', header=None, 
+    manifest = pd.read_csv(file_name, sep=',', header=None, 
                      names=['X', 'Y', 'Weight', 'Info'])
     df = pd.read_csv(file_name, sep=',', header=None, 
                      names=['X', 'Y', 'Weight', 'Info'])
@@ -28,13 +28,22 @@ def main():
     
     # Create the updated manifest file
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
-    manif.to_csv(file_name, header=None, index=False)
+    manifest.to_csv(file_name, header=None, index=False)
 
 
-def print_ship(ship : list[list[str]]) -> None:
-    for row in ship:
-        for col in row:
-            print(col, end=' ')
-        print()
+def print_ship(ship : list[list[str]], S_COLS : int) -> None:
+    O_WIDTH = 3
+    format(S_COLS)
+    for i in ship:
+        for j in i:
+            print('|', j[0:O_WIDTH].ljust(O_WIDTH), end=' ')
+        print('|')
+        format(S_COLS)
+
+
+def format(S_COLS : int) -> None:
+    for i in range(S_COLS * 6 + 1):
+        print('-', end='')
+    print()
 
 main()
