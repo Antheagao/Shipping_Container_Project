@@ -33,15 +33,15 @@ def main():
 
 def print_ship(ship : list[list[str]], S_COLS : int) -> None:
     O_WIDTH = 3
-    print_brackets(S_COLS)
+    print_bars(S_COLS)
     for i in ship:
         for j in i:
             print('|', j[0:O_WIDTH].ljust(O_WIDTH), end=' ')
         print('|')
-        print_brackets(S_COLS)
+        print_bars(S_COLS)
 
 
-def print_brackets(S_COLS : int) -> None:
+def print_bars(S_COLS : int) -> None:
     for i in range(S_COLS * 6 + 1):
         print('-', end='')
     print()
