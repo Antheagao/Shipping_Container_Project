@@ -68,7 +68,7 @@ def print_table(ship : list[list[str]], COLS : int) -> None:
     print_bars(COLS, COL_WIDTH)
     for row in ship:
         for col in row:
-            print('| ', col[0:COL_WIDTH].ljust(COL_WIDTH), sep= '', end=' ')
+            print('| ', col[0:COL_WIDTH].ljust(COL_WIDTH), sep='', end=' ')
         print('|')
         print_bars(COLS, COL_WIDTH)
 
@@ -93,7 +93,7 @@ def is_balanced(ship : list[list[str]], S_ROWS : int, S_COLS : int,
             weight_index = (S_ROWS - 1 - row) * S_COLS + col
             if ship[row][col] == '+++' or ship[row][col] == '   ':
                 continue
-            elif (col < S_COLS //  2):
+            elif (col < S_COLS // 2):
                 left_kg += df.iloc[weight_index]['Weight']
             else:
                 right_kg += df.iloc[weight_index]['Weight']
@@ -101,5 +101,16 @@ def is_balanced(ship : list[list[str]], S_ROWS : int, S_COLS : int,
     # Return true if the weight is balanced and false if not
     return min(left_kg, right_kg) / max(left_kg, right_kg) > 0.9
                 
+
+def a_star(start : list[list[str]], df : pd.DataFrame,
+           manifest : pd.DataFrame) -> None:
+    # Declare variables
+    S_ROWS = len(start)
+    S_COLS = len(start[0])
+    open_set = []
+    came_from = {}
+    
+    
+    
 
 main()
