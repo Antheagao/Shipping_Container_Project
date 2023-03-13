@@ -14,7 +14,7 @@ def main():
     buffer = [['0' for i in range(B_COLS)] for j in range(B_ROWS)]
     
     # Get the manifest file from the user
-    file_name = str(input('Enter the name of the manif file: '))
+    file_name = str(input('Enter the name of the manifest file: '))
     
     # Read the manifest file into a dataframe
     manifest = pd.read_csv(file_name, sep=',', header=None, 
@@ -27,7 +27,6 @@ def main():
     
     # Build the 2d table to represent the ship
     build_ship(ship, S_ROWS, S_COLS, df)
-    print_ship(ship, S_COLS)
     
     # Create the updated manifest file
     file_name = file_name.replace(".txt", "OUTBOUND.txt")

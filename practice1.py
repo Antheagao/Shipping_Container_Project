@@ -68,3 +68,6 @@ for i in ship:
 '''df = pd.read_csv('ShipCase1.txt', sep=',', header=None, 
                      names=['X', 'Y', 'Weight', 'Info'])
 print(df['Weight'][1])'''
+
+# Code to access weight based on column number
+'''df.iloc[2]['Weight']'''
