@@ -11,7 +11,7 @@ def main():
     S_ROWS = 8
     S_COLS = 12
     ship = [['0' for i in range(S_COLS)] for j in range(S_ROWS)]
-    buffer = [['0' for i in range(B_COLS)] for j in range(B_ROWS)]
+    buffer = [['   ' for i in range(B_COLS)] for j in range(B_ROWS)]
     
     # Get the manifest file from the user
     file_name = str(input('Enter the name of the manifest file: '))
@@ -27,7 +27,6 @@ def main():
     
     # Build the 2d table to represent the ship
     build_ship(ship, S_ROWS, S_COLS, df)
-    print(is_balanced(ship, S_ROWS, S_COLS, df))
     
     # Create the updated manifest file
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
@@ -61,28 +60,28 @@ def build_ship(ship : list[list[str]], S_ROWS : int, S_COLS : int,
             count += 1
 
 
-def print_ship(ship : list[list[str]], S_COLS : int) -> None:
+def print_table(ship : list[list[str]], COLS : int) -> None:
     # Declare variables
-    O_WIDTH = 3
+    COL_WIDTH = 3
     
     # Print the ship table with formatting and bars
-    print_bars(S_COLS, O_WIDTH)
+    print_bars(COLS, COL_WIDTH)
     for row in ship:
         for col in row:
-            print('| ', col[0:O_WIDTH].ljust(O_WIDTH), sep= '', end=' ')
+            print('| ', col[0:COL_WIDTH].ljust(COL_WIDTH), sep= '', end=' ')
         print('|')
-        print_bars(S_COLS, O_WIDTH)
+        print_bars(COLS, COL_WIDTH)
 
 
-def print_bars(S_COLS : int, O_WDITH : int) -> None:
+def print_bars(COLS : int, COL_WIDTH : int) -> None:
     # Print bars to divide the ship table into sections
-    for row in range(S_COLS * O_WDITH * 2 + 1):
+    for row in range(COLS * COL_WIDTH * 2 + 1):
         print('-', end='')
     print()
 
 
 def is_balanced(ship : list[list[str]], S_ROWS : int, S_COLS : int,
-                  df : pd.DataFrame) -> bool:
+                df : pd.DataFrame) -> bool:
     # Declare variables
     left_kg = 0.0
     right_kg = 0.0
