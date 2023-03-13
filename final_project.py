@@ -18,7 +18,7 @@ def main():
     
     # Read the manifest file into a dataframe
     manifest = pd.read_csv(file_name, sep=',', header=None, 
-                     names=['X', 'Y', 'Weight', 'Info'])
+                           names=['X', 'Y', 'Weight', 'Info'])
     df = pd.read_csv(file_name, sep=',', header=None, 
                      names=['X', 'Y', 'Weight', 'Info'])
     
@@ -27,6 +27,7 @@ def main():
     
     # Build the 2d table to represent the ship
     build_ship(ship, S_ROWS, S_COLS, df)
+    print(is_balanced(ship, S_ROWS, S_COLS, df))
     
     # Create the updated manifest file
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
@@ -45,32 +46,61 @@ def clean_df(df : pd.DataFrame) -> None:
 
 def build_ship(ship : list[list[str]], S_ROWS : int, S_COLS : int,
                df : pd.DataFrame) -> None:
+    # Declare variables
     count = 0
-    for i in reversed(range(S_ROWS)):
-        for j in range(S_COLS):
+    
+    # Build the ship table from the dataframe
+    for row in reversed(range(S_ROWS)):
+        for col in range(S_COLS):
             if df['Info'][count] == 'NAN':
-                ship[i][j] = '+++'
+                ship[row][col] = '+++'
             elif df['Info'][count] == 'UNUSED':
-                ship[i][j] = '   '
+                ship[row][col] = '   '
             else:
-                ship[i][j] = df['Info'][count]
+                ship[row][col] = df['Info'][count]
             count += 1
 
 
 def print_ship(ship : list[list[str]], S_COLS : int) -> None:
+    # Declare variables
     O_WIDTH = 3
+    
+    # Print the ship table with formatting and bars
     print_bars(S_COLS, O_WIDTH)
-    for i in ship:
-        for j in i:
-            print('| ', j[0:O_WIDTH].ljust(O_WIDTH), sep= '', end=' ')
+    for row in ship:
+        for col in row:
+            print('| ', col[0:O_WIDTH].ljust(O_WIDTH), sep= '', end=' ')
         print('|')
         print_bars(S_COLS, O_WIDTH)
 
 
 def print_bars(S_COLS : int, O_WDITH : int) -> None:
-    for i in range(S_COLS * O_WDITH * 2 + 1):
+    # Print bars to divide the ship table into sections
+    for row in range(S_COLS * O_WDITH * 2 + 1):
         print('-', end='')
     print()
 
+
+def is_balanced(ship : list[list[str]], S_ROWS : int, S_COLS : int,
+                  df : pd.DataFrame) -> bool:
+    # Declare variables
+    left_kg = 0.0
+    right_kg = 0.0
+    weight_index = 0.0
+    
+    # Sum the weight of both sides of the ship and divide min by max weight
+    for row in range(S_ROWS):
+        for col in range(S_COLS):
+            weight_index = (S_ROWS - 1 - row) * S_COLS + col
+            if ship[row][col] == '+++' or ship[row][col] == '   ':
+                continue
+            elif (col < S_COLS //  2):
+                left_kg += df.iloc[weight_index]['Weight']
+            else:
+                right_kg += df.iloc[weight_index]['Weight']
+
+    # Return true if the weight is balanced and false if not
+    return min(left_kg, right_kg) / max(left_kg, right_kg) > 0.9
+                
 
 main()
