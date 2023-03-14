@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from collections import defaultdict
 import heapq
 
 
@@ -109,8 +110,26 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
     S_COLS = len(start[0])
     open_set = []
     came_from = {}
+    g_score = defaultdict(lambda: float('inf'))
+    g_score[start] = 0
+    f_score = defaultdict(lambda: float('inf'))
+    f_score[start] = heuristic(start, df)
     
-    
-    
+    while len(open_set) > 0:
+        current = heapq.heappop(open_set)
+        if is_balanced(current, S_ROWS, S_COLS, df):
+            return reconstruct_path(came_from, current)
+        for child in get_neighbors(current, S_ROWS, S_COLS):
+            tentative_g_score = g_score[current] + distance(current, child)
+            if tentative_g_score < g_score[child]:
+                came_from[child] = current
+                g_score[child] = tentative_g_score
+                f_score[child] = tentative_g_score + heuristic(child, df)
+                if child not in open_set:
+                    heapq.heappush(open_set, child)
+ 
+ 
+def heuristic(ship : list[list[str]], df : pd.DataFrame) -> int:
+    num = 0
 
 main()
