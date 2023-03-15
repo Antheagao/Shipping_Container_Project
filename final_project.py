@@ -30,8 +30,7 @@ def main():
     build_ship(ship, S_ROWS, S_COLS, df)
     
     # Create the updated manifest file
-    file_name = file_name.replace(".txt", "OUTBOUND.txt")
-    manifest.to_csv(file_name, header=None, index=False)
+    update_manifest(file_name, manifest)
 
 
 def clean_df(df : pd.DataFrame) -> None:
@@ -119,7 +118,7 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
         current = heapq.heappop(open_set)
         if is_balanced(current, S_ROWS, S_COLS, df):
             return reconstruct_path(came_from, current)
-        for child in get_neighbors(current, S_ROWS, S_COLS):
+        for child in expand_state(current, S_ROWS, S_COLS):
             tentative_g_score = g_score[current] + distance(current, child)
             if tentative_g_score < g_score[child]:
                 came_from[child] = current
@@ -129,7 +128,23 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
                     heapq.heappush(open_set, child)
  
  
+def reconstruct_path(came_from : dict,
+                     current : list[list[str]]) -> list[list[str]]:
+    num = 0
+ 
+ 
 def heuristic(ship : list[list[str]], df : pd.DataFrame) -> int:
     num = 0
+
+
+def expand_state(ship : list[list[str]],
+                 S_ROWS : int, S_COLS : int) -> list[list[str]]:
+    num = 0    
+    
+    
+def update_manifest(file_name : str, manifest : pd.DataFrame) -> None:
+    file_name = file_name.replace(".txt", "OUTBOUND.txt")
+    manifest.to_csv(file_name, header=None, index=False)
+
 
 main()
