@@ -25,6 +25,7 @@ def main():
     
     # Clean the dataframe
     clean_df(df)
+    print(df)
     
     # Build the 2d table to represent the ship
     build_ship(ship, S_ROWS, S_COLS, df)
@@ -85,18 +86,18 @@ def is_balanced(ship : list[list[str]], S_ROWS : int, S_COLS : int,
     # Declare variables
     left_kg = 0.0
     right_kg = 0.0
-    weight_index = 0.0
+    manifest_index = 0
     
     # Sum the weight of both sides of the ship and divide min by max weight
     for row in range(S_ROWS):
         for col in range(S_COLS):
-            weight_index = (S_ROWS - 1 - row) * S_COLS + col
+            manifest_index = (S_ROWS - 1 - row) * S_COLS + col
             if ship[row][col] == '+++' or ship[row][col] == '   ':
                 continue
             elif (col < S_COLS // 2):
-                left_kg += df.iloc[weight_index]['Weight']
+                left_kg += df.iloc[manifest_index]['Weight']
             else:
-                right_kg += df.iloc[weight_index]['Weight']
+                right_kg += df.iloc[manifest_index]['Weight']
 
     # Return true if the weight is balanced and false if not
     return min(left_kg, right_kg) / max(left_kg, right_kg) > 0.9
@@ -107,7 +108,9 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
     # Declare variables
     S_ROWS = len(start)
     S_COLS = len(start[0])
+    can_drop_off = False
     open_set = []
+    heapq.heappush(open_set, start)
     came_from = {}
     g_score = defaultdict(lambda: float('inf'))
     g_score[start] = 0
@@ -118,7 +121,7 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
         current = heapq.heappop(open_set)
         if is_balanced(current, S_ROWS, S_COLS, df):
             return reconstruct_path(came_from, current)
-        for child in expand_state(current, S_ROWS, S_COLS):
+        for child in expand_state(current, S_ROWS, S_COLS, can_drop_off):
             tentative_g_score = g_score[current] + distance(current, child)
             if tentative_g_score < g_score[child]:
                 came_from[child] = current
@@ -138,13 +141,38 @@ def heuristic(ship : list[list[str]], df : pd.DataFrame) -> int:
 
 
 def expand_state(ship : list[list[str]],
-                 S_ROWS : int, S_COLS : int) -> list[list[str]]:
-    num = 0    
+                 S_ROWS : int, S_COLS : int,
+                 can_drop_off : bool) -> list[list[str]]:
+    # Declare variables
+    manifest_index = 0
+    children = []
+    
+    if can_drop_off:
+        num = 0
+    else:
+        for col in range(S_COLS):
+            for row in range(S_ROWS):
+                if ship[row][col] == '+++' or ship[row][col] == '   ':
+                    continue
+                else:
+                    manifest_index = (S_ROWS - 1 - row) * S_COLS + col
+                    children.append(ship)      
     
     
 def update_manifest(file_name : str, manifest : pd.DataFrame) -> None:
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
+
+
+def balance_search(ship : list[list[str]], df : pd.DataFrame):
+    open_set = []
+    visisted = set()
+    heapq.heappush(open_set, ship)
+    
+    while len(open_set) > 0:
+        current = heapq.heappop(open_set)
+        
+        
 
 
 main()
