@@ -87,11 +87,11 @@ print(df['Weight'][1])'''
 
 # Code to use the min heap library
 '''h = []
-heapq.heappush(h, 4)
-heapq.heappush(h, 1)
-heapq.heappush(h, 10)
-heapq.heappush(h, 2)
-heapq.heappush(h, 5)
+heapq.heappush(h, (4, "eat"))
+heapq.heappush(h, (4, "dog"))
+heapq.heappush(h, (4, "cat"))
+heapq.heappush(h, (4, ""))
+heapq.heappush(h, (4, "nat"))
 
 while len(h) > 0:
     print(heapq.heappop(h))'''
