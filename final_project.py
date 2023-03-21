@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from collections import defaultdict
 import heapq
 import copy
@@ -111,7 +112,7 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
     # Declare variables
     S_ROWS = len(start)
     S_COLS = len(start[0])
-    can_drop_off = False
+    can_drop_off = True
     open_set = []
     states = []
     seen = set()
@@ -135,6 +136,8 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
             can_drop_off = True
         else:
             states = expand_drop_off(current, df, seen, S_ROWS, S_COLS)
+            for state in states:
+                print_table(state[0], S_COLS)
             can_drop_off = False
         '''for state in states:
             temp_g_score = g_score[current[0]] + distance(current[0], state)
@@ -193,15 +196,21 @@ def expand_drop_off(ship : tuple[list[list[str]], str], df : pd.DataFrame,
             manifest_index = (S_ROWS - 1 - row) * S_COLS + col
             temp_ship = copy.deepcopy(ship[0])
             state = (temp_ship, df.iloc[manifest_index]['Name'])
+            if state[1] == ship[1]:
+                break
             if state[1] == 'NAN' or state[1] != 'UNUSED' or str(state) in seen:
                 continue
             else:
-                
+                move = np.argwhere(np.array(state[0]) == ship[1])
+                x = move[0][0]
+                y = move[0][1]
+                state[0][row][col], state[0][x][y] = \
+                    state[0][x][y], state[0][row][col]
+                states.append(state)
                 break
     return states
                 
-    
-    
+     
 def update_manifest(file_name : str, manifest : pd.DataFrame) -> None:
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
