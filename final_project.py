@@ -134,7 +134,7 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
             states = expand_pick_up(current[0], df, seen, S_ROWS, S_COLS)
             can_drop_off = True
         else:
-            states = expand_drop_off(current[0], df, seen, S_ROWS, S_COLS)
+            states = expand_drop_off(current, df, seen, S_ROWS, S_COLS)
             can_drop_off = False
         '''for state in states:
             temp_g_score = g_score[current[0]] + distance(current[0], state)
@@ -180,9 +180,9 @@ def expand_pick_up(ship : list[list[str]], df : pd.DataFrame,
     return states
                
     
-def expand_drop_off(ship : list[list[str]], df : pd.DataFrame,
-                   seen : set, S_ROWS : int,
-                   S_COLS : int) -> list[tuple[list[list[str]], str]]:
+def expand_drop_off(ship : tuple[list[list[str]], str], df : pd.DataFrame,
+                    seen : set, S_ROWS : int,
+                    S_COLS : int) -> list[tuple[list[list[str]], str]]:
     # Declare variables
     states = []
     state = ()
@@ -191,12 +191,12 @@ def expand_drop_off(ship : list[list[str]], df : pd.DataFrame,
     for col in range(S_COLS):
         for row in reversed(range(S_ROWS)):
             manifest_index = (S_ROWS - 1 - row) * S_COLS + col
-            temp_ship = copy.deepcopy(ship)
+            temp_ship = copy.deepcopy(ship[0])
             state = (temp_ship, df.iloc[manifest_index]['Name'])
             if state[1] == 'NAN' or state[1] != 'UNUSED' or str(state) in seen:
                 continue
             else:
-                # logic to drop off container
+                
                 break
     return states
                 

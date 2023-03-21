@@ -102,19 +102,27 @@ while len(h) > 0:
 # code to access a specific element in a row of the dataframe
 '''print(df.iloc[0]['Weight'])'''
 
-seen = set()
+
+# Code to add string of items to a set
+'''seen = set()
 item1 = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 'dog')
 item2 = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 'cat')
 item3 = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 'dog')
 
-'''temp = items[0]
+temp = items[0]
 print(temp)
 temp = list(np.concatenate(temp).flat)
 temp = str(temp) + ', ' + items[1]
 
 seen.add(temp)
 print(seen)
-print(str(items))'''
+print(str(items))
 seen.add(str(item1))
 seen.add(str(item2))
-print(seen)
+print(seen)'''
+
+# code to find index of a specific element in a list
+'''items = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+
+move = np.argwhere(np.array(items) == 8)
+print(move[0][0], move[0][1])'''
