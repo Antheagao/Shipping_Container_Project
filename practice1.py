@@ -126,3 +126,12 @@ print(seen)'''
 
 move = np.argwhere(np.array(items) == 8)
 print(move[0][0], move[0][1])'''
+
+# Code to use a class for the ship bay
+'''class Ship:
+    def __init__(self, bay: list[list[str]], last_held: str, cost: int):
+        self.bay = bay
+        self.last_held = last_held
+        self.cost = cost
+        
+ship1 = Ship ([['0' for i in range(12)] for j in range(8)], 'Dog', 0)'''

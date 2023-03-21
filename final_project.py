@@ -112,7 +112,7 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
     # Declare variables
     S_ROWS = len(start)
     S_COLS = len(start[0])
-    can_drop_off = True
+    can_drop_off = False
     open_set = []
     states = []
     seen = set()
@@ -136,8 +136,6 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
             can_drop_off = True
         else:
             states = expand_drop_off(current, df, seen, S_ROWS, S_COLS)
-            for state in states:
-                print_table(state[0], S_COLS)
             can_drop_off = False
         '''for state in states:
             temp_g_score = g_score[current[0]] + distance(current[0], state)
