@@ -96,3 +96,25 @@ heapq.heappush(h, (4, "nat"))
 while len(h) > 0:
     print(heapq.heappop(h))'''
 
+# Code to print row in dataframe
+'''print(df.iloc[0])'''
+
+# code to access a specific element in a row of the dataframe
+'''print(df.iloc[0]['Weight'])'''
+
+seen = set()
+item1 = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 'dog')
+item2 = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 'cat')
+item3 = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 'dog')
+
+'''temp = items[0]
+print(temp)
+temp = list(np.concatenate(temp).flat)
+temp = str(temp) + ', ' + items[1]
+
+seen.add(temp)
+print(seen)
+print(str(items))'''
+seen.add(str(item1))
+seen.add(str(item2))
+print(seen)
