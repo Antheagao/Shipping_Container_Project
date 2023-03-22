@@ -11,7 +11,7 @@ class Ship:
         self.last_held = last_held
         self.cost = cost
     def __lt__(self, other):
-        return self.cost > other.cost
+        return self.cost < other.cost
         
 
 def main():
@@ -139,7 +139,7 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
         seen.add(str((ship.bay, ship.last_held)))
         if is_balanced(ship.bay, S_ROWS, S_COLS, df):
             return reconstruct_path(came_from, str((ship.bay, ship.last_held)))
-        
+
         # Check if the ship is in a state where it can pick up or drop off
         if can_drop_off == False:
             states = expand_pick_up(current, df, seen, S_ROWS, S_COLS)
