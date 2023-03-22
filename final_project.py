@@ -129,7 +129,7 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
     g_score = defaultdict(lambda: float('inf'))
     g_score[str((ship.bay, ship.last_held))] = 0
     f_score = defaultdict(lambda: float('inf'))
-    f_score[str((ship.bay, ship.last_held))] = heuristic(start, df)
+    f_score[str((ship.bay, ship.last_held))] = heuristic(ship, df)
     
     # Find the shortest path to a balanced ship if it exists
     while len(open_set) > 0:
@@ -165,13 +165,12 @@ def reconstruct_path(came_from : dict,
     num = 0
  
  
-def heuristic(ship : list[list[str]], df : pd.DataFrame) -> int:
+def heuristic(ship : Ship, df : pd.DataFrame) -> int:
     num = 0
 
 
-def expand_pick_up(ship : Ship, df : pd.DataFrame,
-                   seen : set, S_ROWS : int,
-                   S_COLS : int) -> list[Ship]:
+def expand_pick_up(ship : Ship, df : pd.DataFrame, seen : set, 
+                   S_ROWS : int, S_COLS : int) -> list[Ship]:
     # Declare variables
     states = []
     state = ()
@@ -193,9 +192,8 @@ def expand_pick_up(ship : Ship, df : pd.DataFrame,
     return states
                
     
-def expand_drop_off(ship : Ship, df : pd.DataFrame,
-                    seen : set, S_ROWS : int,
-                    S_COLS : int) -> list[Ship]:
+def expand_drop_off(ship : Ship, df : pd.DataFrame, seen : set,
+                    S_ROWS : int, S_COLS : int) -> list[Ship]:
     # Declare variables
     states = []
     state = ()
