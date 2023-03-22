@@ -138,4 +138,15 @@ print(move[0][0], move[0][1])'''
 ship = Ship ([['0' for i in range(12)] for j in range(8)], 'Dog', 0)
 print(str((ship.bay, ship.last_held)))'''
 
-g_score = defaultdict(lambda: float('inf'))
+# Code to iterate through right side of 2d list
+'''table = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+for i in range(len(table)):
+    for j in range(2, len(table[i])):
+        print(table[i][j], end=' ')
+    print()'''
+    
+table = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+print(table)
+table = str(table)
+print(table)
+table = table.replace('[', '')

@@ -10,6 +10,8 @@ class Ship:
         self.bay = bay
         self.last_held = last_held
         self.cost = cost
+    def __lt__(self, other):
+        return self.cost > other.cost
         
 
 def main():
@@ -39,7 +41,7 @@ def main():
     build_ship(ship, S_ROWS, S_COLS, df)
     
     # Balance the ship
-    a_star(ship, df, manifest)
+    print(a_star(ship, df, manifest))
     
     # Create the updated manifest file
     '''update_manifest(file_name, manifest)'''
@@ -136,7 +138,7 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
         current = heapq.heappop(open_set)
         seen.add(str((ship.bay, ship.last_held)))
         if is_balanced(ship.bay, S_ROWS, S_COLS, df):
-            return reconstruct_path(came_from, ship.bay)
+            return reconstruct_path(came_from, str((ship.bay, ship.last_held)))
         
         # Check if the ship is in a state where it can pick up or drop off
         if can_drop_off == False:
@@ -157,16 +159,82 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
                     heapq.heappush(open_set, state)
                     
     # Ship cannot be balanced, perform SIFT
-    '''return "failure"'''
+    return 'failure'
  
  
-def reconstruct_path(came_from : dict,
-                     current : list[list[str]]) -> list[list[str]]:
-    num = 0
+def reconstruct_path(came_from : dict, current : str) -> list[str]:
+    total_path = [current]
+    while current in came_from:
+        current = came_from[current]
+        total_path.prepend(current)
+    return total_path
  
  
 def heuristic(ship : Ship, df : pd.DataFrame) -> int:
-    num = 0
+    # Declare variables
+    S_ROWS = len(ship.bay)
+    S_COLS = len(ship.bay[0])
+    left_kg = 0.0
+    right_kg = 0.0
+    manifest_index = 0
+    balance_mass = 0
+    deficit = 0
+    masses = []
+    h_n = 0
+    items = []
+    
+    # Use left and right weight to calculate the balance mass and deficit
+    for row in range(S_ROWS):
+        for col in range(S_COLS):
+            manifest_index = (S_ROWS - 1 - row) * S_COLS + col
+            if ship.bay[row][col] == '+++' or ship.bay[row][col] == '   ':
+                continue
+            elif (col < S_COLS // 2):
+                left_kg += df.iloc[manifest_index]['Weight']
+            else:
+                right_kg += df.iloc[manifest_index]['Weight']
+    balance_mass = (left_kg + right_kg) / 2 
+    deficit = balance_mass - min(left_kg, right_kg)
+    
+    # Make a list of the masses on the smaller side of the ship
+    if min(left_kg, right_kg) == right_kg:
+        for row in range(S_ROWS):
+            for col in range(S_COLS // 2):
+                if ship.bay[row][col] == '+++' or ship.bay[row][col] == '   ':
+                    continue
+                manifest_index = (S_ROWS - 1 - row) * S_COLS + col
+                name = df.iloc[manifest_index]['Weight']
+                temp = (ship.bay[row][col], name, col)
+                masses.append(temp)
+    else:
+        for row in range(S_ROWS):
+            for col in range(S_COLS // 2, S_COLS):
+                if ship.bay[row][col] == '+++' or ship.bay[row][col] == '   ':
+                    continue
+                manifest_index = (S_ROWS - 1 - row) * S_COLS + col
+                name = df.iloc[manifest_index]['Weight']
+                temp = (ship.bay[row][col], name, col)
+                masses.append(temp)
+    
+    # Sort the masses in decending order by weight
+    masses = sorted(masses, key=lambda x: x[1], reverse=True)
+    
+    # Find the number of containers that need to be moved for balance
+    for mass in masses:
+        if mass[1] > deficit:
+            continue
+        else:
+            deficit -= mass[1]
+            items.append(mass)
+    
+    # Calculate the nearest column on the other side for each container  
+    for item in items:
+        if item[2] < S_COLS // 2:
+            h_n += abs(S_COLS // 2 - item[2])
+        else:
+            h_n += abs(S_COLS // 2 - 1 - item[2])
+    
+    return h_n
 
 
 def expand_pick_up(ship : Ship, df : pd.DataFrame, seen : set, 
