@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 import heapq
+from collections import defaultdict
 
 # Code to read the manifest file into a dataframe
 '''df = pd.read_csv('ShipCase1.txt', sep=',', header=None, 
@@ -134,4 +135,7 @@ print(move[0][0], move[0][1])'''
         self.last_held = last_held
         self.cost = cost
         
-ship1 = Ship ([['0' for i in range(12)] for j in range(8)], 'Dog', 0)'''
+ship = Ship ([['0' for i in range(12)] for j in range(8)], 'Dog', 0)
+print(str((ship.bay, ship.last_held)))'''
+
+g_score = defaultdict(lambda: float('inf'))

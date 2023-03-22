@@ -5,6 +5,13 @@ import heapq
 import copy
 
 
+class Ship:
+    def __init__(self, bay: list[list[str]], last_held: str, cost: int):
+        self.bay = bay
+        self.last_held = last_held
+        self.cost = cost
+        
+
 def main():
     # Declare variables
     file_name = ''
@@ -116,38 +123,40 @@ def a_star(start : list[list[str]], df : pd.DataFrame,
     open_set = []
     states = []
     seen = set()
-    heapq.heappush(open_set, (start, ''))
+    ship = Ship(start, '', 0)
+    heapq.heappush(open_set, ship)
     came_from = {}
     g_score = defaultdict(lambda: float('inf'))
-    g_score[str(start)] = 0
+    g_score[str((ship.bay, ship.last_held))] = 0
     f_score = defaultdict(lambda: float('inf'))
-    f_score[str(start)] = heuristic(start, df)
+    f_score[str((ship.bay, ship.last_held))] = heuristic(start, df)
     
     # Find the shortest path to a balanced ship if it exists
     while len(open_set) > 0:
         current = heapq.heappop(open_set)
-        seen.add(str(current))
-        if is_balanced(current[0], S_ROWS, S_COLS, df):
-            return reconstruct_path(came_from, current[0])
+        seen.add(str((ship.bay, ship.last_held)))
+        if is_balanced(ship.bay, S_ROWS, S_COLS, df):
+            return reconstruct_path(came_from, ship.bay)
         
         # Check if the ship is in a state where it can pick up or drop off
         if can_drop_off == False:
-            states = expand_pick_up(current[0], df, seen, S_ROWS, S_COLS)
+            states = expand_pick_up(current, df, seen, S_ROWS, S_COLS)
             can_drop_off = True
         else:
             states = expand_drop_off(current, df, seen, S_ROWS, S_COLS)
             can_drop_off = False
-        '''for state in states:
-            temp_g_score = g_score[current[0]] + distance(current[0], state)
-            if temp_g_score < g_score[state]:
-                came_from[state] = current
-                g_score[state] = temp_g_score
-                f_score[state] = temp_g_score + heuristic(state, df)
+        for state in states:
+            current_hash = str((current.bay, current.last_held))
+            neighbor_hash = str((state.bay, state.last_held))
+            temp_g_score = g_score[current_hash] + state.cost
+            if temp_g_score < g_score[neighbor_hash]:
+                came_from[neighbor_hash] = current_hash
+                g_score[neighbor_hash] = temp_g_score
+                f_score[neighbor_hash] = temp_g_score + heuristic(state, df)
                 if state not in open_set:
-                    heapq.heappush(open_set, state)'''
+                    heapq.heappush(open_set, state)
                     
     # Ship cannot be balanced, perform SIFT
-    
     '''return "failure"'''
  
  
@@ -160,30 +169,33 @@ def heuristic(ship : list[list[str]], df : pd.DataFrame) -> int:
     num = 0
 
 
-def expand_pick_up(ship : list[list[str]], df : pd.DataFrame,
+def expand_pick_up(ship : Ship, df : pd.DataFrame,
                    seen : set, S_ROWS : int,
-                   S_COLS : int) -> list[tuple[list[list[str]], str]]:
+                   S_COLS : int) -> list[Ship]:
     # Declare variables
     states = []
     state = ()
+    cost = 0
     
     # Store the state of top containers that can be picked up in each column
     for col in range(S_COLS):
         for row in range(S_ROWS):
             manifest_index = (S_ROWS - 1 - row) * S_COLS + col
-            temp_ship = copy.deepcopy(ship)
+            temp_ship = copy.deepcopy(ship.bay)
             state = (temp_ship, df.iloc[manifest_index]['Name'])
             if state[1] == 'NAN' or state[1] == 'UNUSED' or str(state) in seen:
                 continue
             else:
-                states.append(state)
+                cost = abs(-1 - row) + abs(0 - col)
+                new_ship = Ship(state[0], state[1], cost)
+                states.append(new_ship)
                 break
     return states
                
     
-def expand_drop_off(ship : tuple[list[list[str]], str], df : pd.DataFrame,
+def expand_drop_off(ship : Ship, df : pd.DataFrame,
                     seen : set, S_ROWS : int,
-                    S_COLS : int) -> list[tuple[list[list[str]], str]]:
+                    S_COLS : int) -> list[Ship]:
     # Declare variables
     states = []
     state = ()
@@ -192,19 +204,22 @@ def expand_drop_off(ship : tuple[list[list[str]], str], df : pd.DataFrame,
     for col in range(S_COLS):
         for row in reversed(range(S_ROWS)):
             manifest_index = (S_ROWS - 1 - row) * S_COLS + col
-            temp_ship = copy.deepcopy(ship[0])
+            temp_ship = copy.deepcopy(ship.bay)
             state = (temp_ship, df.iloc[manifest_index]['Name'])
-            if state[1] == ship[1]:
+            if state[1] == ship.last_held:
                 break
             if state[1] == 'NAN' or state[1] != 'UNUSED' or str(state) in seen:
                 continue
             else:
-                move = np.argwhere(np.array(state[0]) == ship[1])
+                move = np.argwhere(np.array(state[0]) == ship.last_held)
                 x = move[0][0]
                 y = move[0][1]
                 state[0][row][col], state[0][x][y] = \
                     state[0][x][y], state[0][row][col]
-                states.append(state)
+                cost_to_top = abs(x - -1) 
+                cost = cost_to_top + abs(-1 - row) + abs(y - col)
+                new_ship = Ship(state[0], ship.last_held, cost)
+                states.append(new_ship)
                 break
     return states
                 
@@ -212,10 +227,6 @@ def expand_drop_off(ship : tuple[list[list[str]], str], df : pd.DataFrame,
 def update_manifest(file_name : str, manifest : pd.DataFrame) -> None:
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
-
-
-def distance():
-    num = 0
     
 
 main()
