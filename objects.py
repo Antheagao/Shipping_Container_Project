@@ -13,9 +13,6 @@ class Ship:
     def __lt__(self, other):
         return self.cost < other.cost
     
-    def __str__(self) -> str:
-        return self.bay
-    
     def get_left_kg(self) -> float:
         left_kg = 0.0
         ROW = len(self.bay)
@@ -63,17 +60,6 @@ class Ship:
                 weight = self.bay[row][col].weight
                 right_containers.append((name, weight, col))
         return right_containers
-    
-    def get_bay_string(self) -> str:
-        bay_string = ''
-        ROW = len(self.bay)
-        COL = len(self.bay[0])
-        
-        for row in range(ROW):
-            for col in range(COL):
-                bay_string += self.bay[row][col].name
-            bay_string += '\n'
-        return bay_string
     
     def get_coordinates(self, container: str) -> tuple[int, int]:
         ROW = len(self.bay)
