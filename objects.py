@@ -2,6 +2,17 @@ class Container:
     def __init__(self, name: str, weight: int):
         self.name = name
         self.weight = weight
+        
+
+class Operation:
+    def __init__(self, move: str, index: int, x: int, y: int, name: str, 
+                 position: str):
+        self.move = move
+        self.index = index
+        self.x = x
+        self.y = y
+        self.name = name
+        self.position = position
 
 
 class Ship:

@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from objects import Container, Ship
+from objects import Container, Ship, Operation
 from collections import defaultdict
 from collections import deque
 import heapq
@@ -20,7 +20,7 @@ def main():
     
     # Get the manifest file from the user
     '''file_name = str(input('Enter the name of the manifest file: '))'''
-    file_name = 'ShipCase2.txt'
+    file_name = 'ShipCase1.txt'
     
     # Read the manifest file into a dataframe
     manifest = pd.read_csv(file_name, sep=',', header=None, 
@@ -45,6 +45,10 @@ def main():
     operations = a_star(ship, df, manifest)
     time2 = time.perf_counter()
     print('Time: ', '{:.3f}'.format(time2 - time1), 'seconds')
+    for operation in operations:
+        print(operation.move, operation.index, operation.x,
+              operation.y, operation.name, operation.position)
+        print()
     
     # Create the updated manifest file
     '''update_manifest(file_name, manifest)'''
@@ -121,7 +125,7 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
         if ship.is_balanced():
             print_table(ship.bay, S_COLS)
             print('left weight: ', ship.get_left_kg(), 'right weight: ', ship.get_right_kg())
-            return create_path(came_from, ship_hash)
+            return create_path(came_from, ship_hash, df)
 
         # Check if the ship is in a state where it can pick up or drop off
         if can_drop_off == False:
@@ -144,12 +148,14 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     return 'failure'
 
  
-def create_path(came_from : dict, current : tuple[str, str]) -> list[str]:
+def create_path(came_from : dict, current : tuple[str, str], 
+                df: pd.DataFrame) -> list[Operation]:
     # Declare variables
     print('success')
     bay_states = deque(current)
     containers_held = deque()
     operations = []
+    pick_up = True
     
     # Create the path of states from start to finish
     while current in came_from:
@@ -158,17 +164,28 @@ def create_path(came_from : dict, current : tuple[str, str]) -> list[str]:
         containers_held.appendleft(current[1])
     
     # Get the operations for the operator
-    
-    
-    '''print(containers_held)
     containers_held.append(containers_held[len(containers_held) - 1])
-    print(containers_held)
-    hashed_words = []
-    for index in range(1, len(bay_states) - 1):
+    for index in range(1, len(bay_states) - 1): 
         hashed_words = get_hashed_words(bay_states[index])
-        print_hash_as_table(hashed_words)
-    hashed_words = get_hashed_words(bay_states[1])
-    print(hashed_words.index('Dog'))'''
+        operation = Operation('', 0, 0, 0, '', '')
+        false_index = get_word_index(hashed_words, containers_held[index])
+        operation.x = false_index // 12
+        operation.y = false_index % 12
+        operation.index = (8 - 1 - operation.x) * 12 + operation.y
+        operation.name = containers_held[index]
+        operation.position = str(df.iloc[operation.index]['X']) + ',' + \
+                             str(df.iloc[operation.index]['Y'])
+        
+        if pick_up == True:
+            operation.move = 'Move '
+            operations.append(operation)
+            pick_up = False
+        else:
+            operation.move = 'To '
+            operations.append(operation)
+            pick_up = True
+            
+    # Return the operations 
     return operations
 
 
