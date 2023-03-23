@@ -20,7 +20,7 @@ def main():
     
     # Get the manifest file from the user
     '''file_name = str(input('Enter the name of the manifest file: '))'''
-    file_name = 'ShipCase1.txt'
+    file_name = 'ShipCase2.txt'
     
     # Read the manifest file into a dataframe
     manifest = pd.read_csv(file_name, sep=',', header=None, 
@@ -30,7 +30,7 @@ def main():
     
     # Clean the dataframe
     clean_df(df)
-    '''print(df)'''
+    print(df)
     
     # Build the 2d table to represent the ship
     build_ship(bay, S_ROWS, S_COLS, df)
@@ -44,7 +44,7 @@ def main():
     time1 = time.perf_counter()
     operations = a_star(ship, df, manifest)
     time2 = time.perf_counter()
-    print('Time: ', time2 - time1)
+    print('Time: ', '{:.3f}'.format(time2 - time1), 'seconds')
     
     # Create the updated manifest file
     '''update_manifest(file_name, manifest)'''
@@ -142,27 +142,91 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
                     
     # Ship cannot be balanced, perform SIFT
     return 'failure'
- 
+
  
 def create_path(came_from : dict, current : tuple[str, str]) -> list[str]:
+    # Declare variables
     print('success')
-    total_path = deque(current)
-    operations = deque()
+    bay_states = deque(current)
+    containers_held = deque()
+    operations = []
+    
+    # Create the path of states from start to finish
     while current in came_from:
         current = came_from[current]
-        total_path.appendleft(current)
-        operations.appendleft(current[1])
-    print(operations)
-    print(total_path[1])
-    # find index of cat in list
-    for i in range(len(total_path[1]) - 3):
-        if total_path[i][1] == 'cat':
-            index = i
-            print(index)
-            break
+        bay_states.appendleft(current[0])
+        containers_held.appendleft(current[1])
     
-    return total_path
- 
+    # Get the operations for the operator
+    
+    
+    '''print(containers_held)
+    containers_held.append(containers_held[len(containers_held) - 1])
+    print(containers_held)
+    hashed_words = []
+    for index in range(1, len(bay_states) - 1):
+        hashed_words = get_hashed_words(bay_states[index])
+        print_hash_as_table(hashed_words)
+    hashed_words = get_hashed_words(bay_states[1])
+    print(hashed_words.index('Dog'))'''
+    return operations
+
+
+def parse_manifest_index(hashed_table : str, name : str) -> int:
+    # Declare variables
+    word_count = 0
+    
+    # Find the index of the word in the hashed table
+    for i in range(len(hashed_table) - 2):
+        if hashed_table[i] == ';':
+            word_count += 1
+            
+        if hashed_table[i] == name[0] and \
+           hashed_table[i + 1] == name[1] and \
+           hashed_table[i + 2] == name[2]:
+            return word_count
+        
+
+def get_hashed_words(table : str) -> list[str]:
+    # Declare variables
+    words = []
+    word = ''
+    
+    # Get the words from the hashed table
+    for i in range(len(table)):
+        if table[i] == '-':
+            words.append(word)
+            word = ''
+            
+        if table[i] == ' ':
+            word += table[i]
+            
+        if table[i].isalpha() or table[i] == '+':
+            word += table[i]
+    
+    return words
+
+
+def print_hash_as_table(words : list[str]) -> None:
+    # Declare variables
+    num_bars = 73
+    
+    # Print the hashed table
+    for index in range(len(words)):
+        if index % 12 == 0:
+            print()
+            print('-' * num_bars)
+            print('|', end=' ')
+            
+        print(words[index], end=' | ')
+        
+    print()
+    print('-' * num_bars)
+
+
+def get_word_index(hashed_words : list[str], name : str) -> int:
+    return hashed_words.index(name)
+
  
 def heuristic(ship : Ship) -> int:
     # Declare variables
