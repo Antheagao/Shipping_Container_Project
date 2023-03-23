@@ -20,7 +20,7 @@ def main():
     
     # Get the manifest file from the user
     '''file_name = str(input('Enter the name of the manifest file: '))'''
-    file_name = 'ShipCase5.txt'
+    file_name = 'ShipCase1.txt'
     
     # Read the manifest file into a dataframe
     manifest = pd.read_csv(file_name, sep=',', header=None, 
@@ -147,9 +147,20 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
 def create_path(came_from : dict, current : tuple[str, str]) -> list[str]:
     print('success')
     total_path = deque(current)
+    operations = deque()
     while current in came_from:
         current = came_from[current]
         total_path.appendleft(current)
+        operations.appendleft(current[1])
+    print(operations)
+    print(total_path[1])
+    # find index of cat in list
+    for i in range(len(total_path[1]) - 3):
+        if total_path[i][1] == 'cat':
+            index = i
+            print(index)
+            break
+    
     return total_path
  
  
