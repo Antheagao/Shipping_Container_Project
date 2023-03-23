@@ -37,18 +37,15 @@ def main():
     
     # Balance the ship
     ship = Ship(bay, '', 0)
-    print('Original Ship')
-    print_table(ship.bay, S_COLS)
-    print('left weight: ', ship.get_left_kg(), 'right weight: ', ship.get_right_kg())
-    print('Balanced Ship')
+    begin_balance_test(ship, S_COLS)
     time1 = time.perf_counter()
     operations = a_star(ship, df, manifest)
     time2 = time.perf_counter()
     print('Time: ', '{:.3f}'.format(time2 - time1), 'seconds')
-    for operation in operations:
+    '''for operation in operations:
         print(operation.move, operation.index, operation.x,
               operation.y, operation.name, operation.position)
-        print()
+        print()'''
     
     # Create the updated manifest file
     '''update_manifest(file_name, manifest)'''
@@ -120,11 +117,8 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
         ship = heapq.heappop(open_set)
         ship_hash = (ship.get_hash(), ship.last_held)
         seen.add(ship_hash)
-        '''print_table(ship.bay, S_COLS)
-        pause = input('Press enter to continue...')'''
         if ship.is_balanced():
-            print_table(ship.bay, S_COLS)
-            print('left weight: ', ship.get_left_kg(), 'right weight: ', ship.get_right_kg())
+            end_balance_test(ship, S_COLS)
             return create_path(came_from, ship_hash, df)
 
         # Check if the ship is in a state where it can pick up or drop off
@@ -151,7 +145,6 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
 def create_path(came_from : dict, current : tuple[str, str], 
                 df: pd.DataFrame) -> list[Operation]:
     # Declare variables
-    print('success')
     bay_states = deque(current)
     containers_held = deque()
     operations = []
@@ -187,62 +180,6 @@ def create_path(came_from : dict, current : tuple[str, str],
             
     # Return the operations 
     return operations
-
-
-def parse_manifest_index(hashed_table : str, name : str) -> int:
-    # Declare variables
-    word_count = 0
-    
-    # Find the index of the word in the hashed table
-    for i in range(len(hashed_table) - 2):
-        if hashed_table[i] == ';':
-            word_count += 1
-            
-        if hashed_table[i] == name[0] and \
-           hashed_table[i + 1] == name[1] and \
-           hashed_table[i + 2] == name[2]:
-            return word_count
-        
-
-def get_hashed_words(table : str) -> list[str]:
-    # Declare variables
-    words = []
-    word = ''
-    
-    # Get the words from the hashed table
-    for i in range(len(table)):
-        if table[i] == '-':
-            words.append(word)
-            word = ''
-            
-        if table[i] == ' ':
-            word += table[i]
-            
-        if table[i].isalpha() or table[i] == '+':
-            word += table[i]
-    
-    return words
-
-
-def print_hash_as_table(words : list[str]) -> None:
-    # Declare variables
-    num_bars = 73
-    
-    # Print the hashed table
-    for index in range(len(words)):
-        if index % 12 == 0:
-            print()
-            print('-' * num_bars)
-            print('|', end=' ')
-            
-        print(words[index], end=' | ')
-        
-    print()
-    print('-' * num_bars)
-
-
-def get_word_index(hashed_words : list[str], name : str) -> int:
-    return hashed_words.index(name)
 
  
 def heuristic(ship : Ship) -> int:
@@ -342,6 +279,76 @@ def expand_drop_off(ship : Ship, seen : set,
 def update_manifest(file_name : str, manifest : pd.DataFrame) -> None:
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
+
+
+def parse_manifest_index(hashed_table : str, name : str) -> int:
+    # Declare variables
+    word_count = 0
+    
+    # Find the index of the word in the hashed table
+    for i in range(len(hashed_table) - 2):
+        if hashed_table[i] == ';':
+            word_count += 1
+            
+        if hashed_table[i] == name[0] and \
+           hashed_table[i + 1] == name[1] and \
+           hashed_table[i + 2] == name[2]:
+            return word_count
+        
+
+def get_hashed_words(table : str) -> list[str]:
+    # Declare variables
+    words = []
+    word = ''
+    
+    # Get the words from the hashed table
+    for i in range(len(table)):
+        if table[i] == '-':
+            words.append(word)
+            word = ''
+            
+        if table[i] == ' ':
+            word += table[i]
+            
+        if table[i].isalpha() or table[i] == '+':
+            word += table[i]
+    
+    return words
+
+
+def print_hash_as_table(words : list[str]) -> None:
+    # Declare variables
+    num_bars = 73
+    
+    # Print the hashed table
+    for index in range(len(words)):
+        if index % 12 == 0:
+            print()
+            print('-' * num_bars)
+            print('|', end=' ')
+            
+        print(words[index], end=' | ')
+        
+    print()
+    print('-' * num_bars)
+
+
+def get_word_index(hashed_words : list[str], name : str) -> int:
+    return hashed_words.index(name)
+
+
+def begin_balance_test(ship: Ship, S_COLS: int) -> None:
+    print('Original Ship')
+    print_table(ship.bay, S_COLS)
+    print('left weight: ', ship.get_left_kg(),
+          'right weight: ',ship.get_right_kg())
+    
+    
+def end_balance_test(ship: Ship, S_COLS: int) -> None:
+    print('Balanced Ship')
+    print_table(ship.bay, S_COLS)
+    print('left weight: ', ship.get_left_kg(),
+          'right weight: ',ship.get_right_kg())
     
 
 if __name__ == '__main__':
