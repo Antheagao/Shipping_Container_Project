@@ -35,6 +35,7 @@ def main():
         file_name = 'ship_cases/'
         file_name += str(input('Enter the name of the manifest file: '))
         ship_name = file_name.replace(".txt", "")
+        ship_name = ship_name.replace("ship_cases/", "")
         
         # Read the manifest file into a dataframe
         manifest = pd.read_csv(file_name, sep=',', header=None, 
@@ -50,6 +51,8 @@ def main():
         # Build the 2d table to represent the ship
         build_ship(bay, S_ROWS, S_COLS, df)
         ship = Ship(bay, '', 0)
+        print('\nThe ship you are working with:')
+        print_table(ship.bay, S_COLS)
         
         # Ask the user which job they are doing
         job_type = str(input('\nSelect the job type:\n(1). Balance\n'
@@ -57,7 +60,6 @@ def main():
         
         # Begin ship balancing/unloading/loading
         if job_type == '1':
-            display_ship_status(ship, ship_name, user_name)
             time1 = time.perf_counter()
             operations = a_star(ship, df)
             time2 = time.perf_counter()
@@ -73,10 +75,10 @@ def main():
         # Create the updated manifest file and send it to the ship captain
         update_manifest(file_name, manifest)
         file_name = file_name.replace(".txt", "OUTBOUND.txt")
-        print('Finished a job cycle,', file_name,
+        print('\n\nFinished a job cycle,', file_name,
               'was written to desktop.\n'
               'Send the updated manifest to the ship captain.\n')
-        confirm = str(input('Enter c to confirm the message was read:'))
+        confirm = str(input('Enter (c) to confirm the message was read:'))
         while confirm != 'c':
             confirm = str(input('Enter (c) to confirm the message was read:'))
         
@@ -402,8 +404,8 @@ def display_ship_status(ship: Ship, ship_name: str, user_name: str) -> None:
     print()
     print('Ship Name:', ship_name, '\t\tOperator:', user_name)
     print_table(ship.bay, S_COLS)
-    print('left weight:', ship.get_left_kg(),
-          '\t\tright weight:', ship.get_right_kg())
+    print('Port weight:', ship.get_left_kg(),
+          '\t\tStarboard weight:', ship.get_right_kg())
   
 
 ''' Function to let the operator perform the operations on the ship '''
@@ -411,11 +413,18 @@ def perform_balance(ship: Ship, operations: list[Operation],
                     manifest: pd.DataFrame, user_name: str,
                     ship_name: str) -> None:
     # Have the operator perform the operations on the ship
-    print('Begin balancing the ship')
+    print('<' * 23,'Begin balancing the ship', '>' * 23, '\n')
     for index in range(0, len(operations), 2):
+        x1, y1 = operations[index].x, operations[index].y
+        x2, y2 = operations[index + 1].x, operations[index + 1].y
+        index1, index2 = operations[index].index, operations[index + 1].index
+        print('=' * 22,
+              operations[index].move, operations[index].position, '',
+              operations[index + 1].move, operations[index + 1].position,
+              '=' * 22)
+        ship.bay[x2][y2].name = ' X '
         display_ship_status(ship, ship_name, user_name)
-        print(operations[index].move, operations[index].position, '',
-              operations[index + 1].move, operations[index + 1].position)
+        ship.bay[x2][y2].name = '   '
         print()
         
         choice = input('Enter (1) to confirm the move '
@@ -430,16 +439,14 @@ def perform_balance(ship: Ship, operations: list[Operation],
                 choice = input('Enter (1) to confirm the previous move: ')
         
         # Swap the containers in the ship bay and update the manifest
-        x1, y1 = operations[index].x, operations[index].y
-        x2, y2 = operations[index + 1].x, operations[index + 1].y
-        index1, index2 = operations[index].index, operations[index + 1].index
+       
         ship.bay[x1][y1], ship.bay[x2][y2] = ship.bay[x2][y2], ship.bay[x1][y1]
         manifest.iloc[index1]['Name'], manifest.iloc[index2]['Name'] =\
             manifest.iloc[index2]['Name'], manifest.iloc[index1]['Name']
         manifest.iloc[index1]['Weight'], manifest.iloc[index2]['Weight'] =\
             manifest.iloc[index2]['Weight'], manifest.iloc[index1]['Weight']
         print()
-    print('Fininshed balancing the ship')
+    print('<' * 23,'Fininshed balancing the ship', '>' * 23, '\n')
     display_ship_status(ship, ship_name, user_name)
     
 
