@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import heapq
 from collections import defaultdict
+from datetime import date 
+from datetime import datetime
 
 # Code to read the manifest file into a dataframe
 '''df = pd.read_csv('ShipCase1.txt', sep=',', header=None, 
@@ -152,9 +154,20 @@ print(table)
 table = table.replace('[', '')'''
 
 # code to swap manifest values
-df = pd.read_csv('ship_cases/ShipCase1.txt', sep=',', header=None, 
+'''df = pd.read_csv('ship_cases/ShipCase1.txt', sep=',', header=None, 
                      names=['X', 'Y', 'Weight', 'Name'])
 
 df.iloc[0]['Name'], df.iloc[1]['Name'] = df.iloc[1]['Name'], df.iloc[0]['Name'] 
 #df.iloc[0], df.iloc[1] = df.iloc[1].copy(), df.iloc[0].copy()
-df.to_csv('ship_cases/ShipCase1.txt', header=None, index=False)
+df.to_csv('ship_cases/ShipCase1.txt', header=None, index=False)'''
+
+# code to get the current date and time
+today = date.today()
+print("Today's date:", today)
+d2 = today.strftime("%B %d %Y")
+print("d2 =", d2)
+
+now = datetime.now()
+print("now =", now)
+dt_string = now.strftime("%B %d %Y: %H:%M")
+print("date and time =", dt_string)
