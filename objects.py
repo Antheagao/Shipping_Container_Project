@@ -120,8 +120,6 @@ class Ship:
 
         return count
         
-
-    
     def get_hash(self):
         state_repr = ""
         for row in self.bay:
@@ -129,3 +127,11 @@ class Ship:
                 state_repr += f"{container.name}-{container.weight};"
         state_repr += self.last_held
         return state_repr
+    
+    def get_container_count(self) -> int:
+        count = 0
+        for row in self.bay:
+            for container in row:
+                if container.name != '   ' and container.name != '+++':
+                    count += 1
+        return count

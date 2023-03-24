@@ -67,7 +67,13 @@ def main():
         # Build the 2d table to represent the ship
         build_ship(bay, S_ROWS, S_COLS, df)
         ship = Ship(bay, '', 0)
-        print('\nThe ship you are working with:')
+        date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+        log_file.write(date_time + 'Manifest ' +
+                       file_name.replace("ship_cases/", "") + ' is opened, '
+                       'there are ' + str(ship.get_container_count()) +
+                       ' containers on the ship\n')
+        print('\nThe ship you are working with:\t\t'
+              'Container count:', ship.get_container_count())
         print_table(ship.bay, S_COLS)
         
         # Ask the user which job they are doing
