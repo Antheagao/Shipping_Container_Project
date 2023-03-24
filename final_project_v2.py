@@ -67,7 +67,8 @@ def main():
                   ':', '{:.3f}'.format(time2 - time1), 'seconds\n')
             print('Estimated time to balance:',
                   calculate_time(operations), 'minutes\n')
-            perform_balance(ship, operations, manifest, user_name, ship_name)
+            user_name = balancing(ship, operations,
+                                  manifest, user_name, ship_name)
         else:
             begin_unload = None
             begin_load = None
@@ -86,6 +87,11 @@ def main():
         user_input = str(input('Do you want to work on another ship? (y/n): '))
         if user_input == 'y':
             running = True
+            user_input = str(input('Do you want to change user? (y/n): '))
+            if user_input == 'y':
+                user_name = str(input('Enter your name to sign in: '))
+            while user_input != 'y' and user_input != 'n':
+                user_input = str(input('Do you want to change user? (y/n): '))
         else:
             running = False
 
@@ -409,9 +415,9 @@ def display_ship_status(ship: Ship, ship_name: str, user_name: str) -> None:
   
 
 ''' Function to let the operator perform the operations on the ship '''
-def perform_balance(ship: Ship, operations: list[Operation],
+def balancing(ship: Ship, operations: list[Operation],
                     manifest: pd.DataFrame, user_name: str,
-                    ship_name: str) -> None:
+                    ship_name: str) -> str:
     # Have the operator perform the operations on the ship
     print('<' * 23,'Begin balancing the ship', '>' * 23, '\n')
     for index in range(0, len(operations), 2):
@@ -447,7 +453,7 @@ def perform_balance(ship: Ship, operations: list[Operation],
         print()
     print('<' * 23,'Fininshed balancing the ship', '>' * 23, '\n')
     display_ship_status(ship, ship_name, user_name)
-    
+    return user_name
 
 if __name__ == '__main__':
     main()
