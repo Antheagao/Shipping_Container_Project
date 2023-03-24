@@ -83,6 +83,23 @@ class Ship:
 
         return coord
 
+    def get_open_columns(self, coord: list[int]) -> list[int]:
+        ROW = len(self.bay)
+        COL = len(self.bay[0])
+        open = []
+        
+        for row in range(ROW):
+            for col in range(COL):
+                if self.bay[row][col].name == '   ' and (col) not in open:
+                    x,y = (row,col)
+                    if y not in coord:
+                        open.append(y)
+
+        return open
+
+    def move_left(self, curr)
+
+
     def get_stacked(self, coords: tuple[int,int]) -> int:
 
         row,col = coords

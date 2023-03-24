@@ -192,7 +192,92 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
                     finalXy = coordinates[minList.index(min(minList))]
                     final_coordinates.append(finalXy)
     #collected all coordinates we need for unloading, did checks for dupes, and everything to get best coordinates available,
-    print(final_coordinates)
+    #print(final_coordinates)
+
+    occupied_columns = []
+    open_columns = []
+
+    for i,j in final_coordinates:
+        occupied_columns.append(j)
+
+    open_columns = ship.get_open_columns(occupied_columns)
+    #print(occupied_columns)
+    #print(open_columns)
+
+    orderOfMoves = []
+    totalMoves = 0
+
+
+
+    while len(final_coordinates) > 0: #while our final coordinates is not empty...
+        #get a list of the amount of crates that are stacked on top, ideally, we want to start unloading the crate with the least amount of crates stacked on
+        finalStacked = []
+        for i in final_coordinates:
+            row,column = i
+            stackedOnTop = ship.get_stacked((row,column))
+            finalStacked.append(stackedOnTop)
+
+        #sort array in ascending order
+        finalStacked, final_coordinates = (list(t) for t in zip(*sorted(zip(finalStacked, final_coordinates)))) #sort the parallel lists in ascending order given the crates on top list as our key
+        
+        print(final_coordinates)
+        print(finalStacked)
+
+        while finalStacked[0] > 0: #takes first value of list of crates stacked to see if we are able to unload
+
+            #get the coordinate of the top-most container that we want to unload
+            row,column = final_coordinates[0]
+            row = row - finalStacked[0]    #ex (7,8) -> (5,8) for owl test case
+            
+
+            for openColLocation in open_columns:
+
+                #if openColLocation is less than our current col, we move left, up, and down
+                #else we move right, up, and down
+                #we need to check if we are able to move left, if not move up,
+                #if we move up and are out of bounds aka in -1, then we move to openCol and keep going down until we cant go further down
+                #we should save two values, names currMoves and currCords, as well with minMoves and minCords
+
+                if openColLocation < column: #Line 229 column value
+                    currMoves, currCords = ship.move_left(row,column,openColLocation)
+
+
+
+
+
+
+
+
+            #at the end
+            finalStacked[0] = finalStacked[0] - 1
+
+
+
+
+
+
+
+
+
+
+        row,column = final_coordinates[0]
+        totalMoves = totalMoves + abs(row - -1) + abs(column - -1)
+        move = "Move " + str(final_coordinates[0]) + " to (-1, -1)" 
+        orderOfMoves.append(move)
+        
+
+        final_coordinates.pop(0)
+
+    print(orderOfMoves)
+        
+
+
+
+
+
+    
+
+
 
 
 
