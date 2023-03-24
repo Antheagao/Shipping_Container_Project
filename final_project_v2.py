@@ -200,12 +200,12 @@ def create_path(came_from: dict, current: tuple[str, str],
     containers_held.append(containers_held[len(containers_held) - 1])
     for index in range(1, len(bay_states) - 1): 
         hashed_words = get_hashed_words(bay_states[index])
-        operation = Operation('', 0, 0, 0, '', '')
+        operation = Operation('', 0, 0, 0, '   ', '')
         false_index = hashed_words.index(containers_held[index])
         operation.x = false_index // 12
         operation.y = false_index % 12
-        operation.index = (8 - 1 - operation.x) * 12 + operation.y
         operation.name = containers_held[index]
+        operation.index = (8 - 1 - operation.x) * 12 + operation.y
         operation.position = str(df.iloc[operation.index]['X'])\
                              + ','\
                              + str(df.iloc[operation.index]['Y'])
@@ -408,15 +408,33 @@ def display_ship_status(ship: Ship, ship_name: str, user_name: str) -> None:
 def perform_balance(ship: Ship, operations: list[Operation],
                     manifest: pd.DataFrame, user_name: str,
                     ship_name: str) -> None:
+    # Have the operator perform the operations on the ship
     print('Begin balancing the ship')
     for index in range(0, len(operations), 2):
         display_ship_status(ship, ship_name, user_name)
         print(operations[index].move, operations[index].position, '',
               operations[index + 1].move, operations[index + 1].position)
         print()
+        
+        choice = input('Enter (1) to confirm the move '
+                       'or (2) to switch user: ')
+        while choice != '1' and choice != '2':
+            choice = input('Enter (1) to confirm the move '
+                           'or (2) to switch user: ')
+        if choice == '2':
+            user_name = input('Enter your name to sign in: ')
+            choice = input('Enter (1) to confirm the previous move: ')
+            while choice != '1':
+                choice = input('Enter (1) to confirm the previous move: ')
+        
+        # Swap the containers in the ship bay and update the manifest
+        x1, y1 = operations[index].x, operations[index].y
+        x2, y2 = operations[index + 1].x, operations[index + 1].y
+        ship.bay[x1][y1], ship.bay[x2][y2] = ship.bay[x2][y2], ship.bay[x1][y1]
+        
         print()
-    
-    
+    print('Fininshed balancing the ship')
+    display_ship_status(ship, ship_name, user_name)
     
 
 if __name__ == '__main__':
