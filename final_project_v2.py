@@ -1,13 +1,15 @@
-import pandas as pd
-import numpy as np
-from objects import Container, Ship
 from collections import defaultdict
 from collections import deque
 import heapq
 import copy
 import time
 
-        
+import pandas as pd
+import numpy as np
+
+from objects import Container, Ship, Operation
+
+       
 def main():
     # Declare variables
     file_name = ''
@@ -20,7 +22,7 @@ def main():
     
     # Get the manifest file from the user
     '''file_name = str(input('Enter the name of the manifest file: '))'''
-    file_name = 'ShipCase2.txt'
+    file_name = 'ShipCase1.txt'
     
     # Read the manifest file into a dataframe
     manifest = pd.read_csv(file_name, sep=',', header=None, 
@@ -37,19 +39,21 @@ def main():
     
     # Balance the ship
     ship = Ship(bay, '', 0)
-    print('Original Ship')
-    print_table(ship.bay, S_COLS)
-    print('left weight: ', ship.get_left_kg(), 'right weight: ', ship.get_right_kg())
-    print('Balanced Ship')
+    begin_balance_test(ship, S_COLS)
     time1 = time.perf_counter()
     operations = a_star(ship, df, manifest)
     time2 = time.perf_counter()
     print('Time: ', '{:.3f}'.format(time2 - time1), 'seconds')
+    '''for operation in operations:
+        print(operation.move, operation.index, operation.x,
+              operation.y, operation.name, operation.position)
+        print()'''
     
     # Create the updated manifest file
     '''update_manifest(file_name, manifest)'''
 
 
+''' Function to change weight to int and remove whitespace from name '''
 def clean_df(df : pd.DataFrame) -> None:
     # Remove the curly braces from the weight column and convert to int
     df["Weight"] = df['Weight'].str.replace(r'{|}', '', regex=True)
@@ -60,6 +64,7 @@ def clean_df(df : pd.DataFrame) -> None:
     df['Name'] = df['Name'].str.strip()
     
 
+''' Function to build the ship table from the dataframe as a 2d list '''
 def build_ship(ship : list[list[Container]], S_ROWS : int, S_COLS : int,
                df : pd.DataFrame) -> None:
     # Declare variables
@@ -78,6 +83,7 @@ def build_ship(ship : list[list[Container]], S_ROWS : int, S_COLS : int,
             count += 1
 
 
+''' Function to print the ship table with formatting and bars '''
 def print_table(ship : list[list[Container]], COLS : int) -> None:
     # Declare variables
     WIDTH = 3
@@ -95,11 +101,12 @@ def print_table(ship : list[list[Container]], COLS : int) -> None:
         print()
                 
 
+''' Function to perform a search to find the balanced state of the ship '''
 def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     # Declare variables
     S_ROWS = len(start.bay)
     S_COLS = len(start.bay[0])
-    can_drop_off = False
+    can_pick_up = True
     open_set = []
     states = []
     seen = set()
@@ -112,24 +119,21 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     f_score[start_hash] = heuristic(start)
     
     # Find the shortest path to a balanced ship if it exists
-    while len(open_set) > 0:
+    while open_set:
         ship = heapq.heappop(open_set)
         ship_hash = (ship.get_hash(), ship.last_held)
         seen.add(ship_hash)
-        '''print_table(ship.bay, S_COLS)
-        pause = input('Press enter to continue...')'''
         if ship.is_balanced():
-            print_table(ship.bay, S_COLS)
-            print('left weight: ', ship.get_left_kg(), 'right weight: ', ship.get_right_kg())
-            return create_path(came_from, ship_hash)
+            end_balance_test(ship, S_COLS)
+            return create_path(came_from, ship_hash, df)
 
         # Check if the ship is in a state where it can pick up or drop off
-        if can_drop_off == False:
+        if can_pick_up:
             states = expand_pick_up(ship, seen, S_ROWS, S_COLS)
-            can_drop_off = True
+            can_pick_up = False
         else:
             states = expand_drop_off(ship, seen, S_ROWS, S_COLS)
-            can_drop_off = False
+            can_pick_up = True
         for state in states:
             neighbor_hash = (state.get_hash(), state.last_held)
             temp_g_score = g_score[ship_hash] + state.cost
@@ -143,13 +147,15 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     # Ship cannot be balanced, perform SIFT
     return 'failure'
 
- 
-def create_path(came_from : dict, current : tuple[str, str]) -> list[str]:
+
+''' Function to build path of operators to balance the ship '''
+def create_path(came_from : dict, current : tuple[str, str], 
+                df: pd.DataFrame) -> list[Operation]:
     # Declare variables
-    print('success')
     bay_states = deque(current)
     containers_held = deque()
     operations = []
+    pick_up = True
     
     # Create the path of states from start to finish
     while current in came_from:
@@ -158,76 +164,32 @@ def create_path(came_from : dict, current : tuple[str, str]) -> list[str]:
         containers_held.appendleft(current[1])
     
     # Get the operations for the operator
-    
-    
-    '''print(containers_held)
     containers_held.append(containers_held[len(containers_held) - 1])
-    print(containers_held)
-    hashed_words = []
-    for index in range(1, len(bay_states) - 1):
+    for index in range(1, len(bay_states) - 1): 
         hashed_words = get_hashed_words(bay_states[index])
-        print_hash_as_table(hashed_words)
-    hashed_words = get_hashed_words(bay_states[1])
-    print(hashed_words.index('Dog'))'''
+        operation = Operation('', 0, 0, 0, '', '')
+        false_index = hashed_words.index(containers_held[index])
+        operation.x = false_index // 12
+        operation.y = false_index % 12
+        operation.index = (8 - 1 - operation.x) * 12 + operation.y
+        operation.name = containers_held[index]
+        operation.position = str(df.iloc[operation.index]['X'])\
+                             + ','\
+                             + str(df.iloc[operation.index]['Y'])
+        if pick_up == True:
+            operation.move = 'Move '
+            operations.append(operation)
+            pick_up = False
+        else:
+            operation.move = 'To '
+            operations.append(operation)
+            pick_up = True
+            
+    # Return the operations 
     return operations
 
 
-def parse_manifest_index(hashed_table : str, name : str) -> int:
-    # Declare variables
-    word_count = 0
-    
-    # Find the index of the word in the hashed table
-    for i in range(len(hashed_table) - 2):
-        if hashed_table[i] == ';':
-            word_count += 1
-            
-        if hashed_table[i] == name[0] and \
-           hashed_table[i + 1] == name[1] and \
-           hashed_table[i + 2] == name[2]:
-            return word_count
-        
-
-def get_hashed_words(table : str) -> list[str]:
-    # Declare variables
-    words = []
-    word = ''
-    
-    # Get the words from the hashed table
-    for i in range(len(table)):
-        if table[i] == '-':
-            words.append(word)
-            word = ''
-            
-        if table[i] == ' ':
-            word += table[i]
-            
-        if table[i].isalpha() or table[i] == '+':
-            word += table[i]
-    
-    return words
-
-
-def print_hash_as_table(words : list[str]) -> None:
-    # Declare variables
-    num_bars = 73
-    
-    # Print the hashed table
-    for index in range(len(words)):
-        if index % 12 == 0:
-            print()
-            print('-' * num_bars)
-            print('|', end=' ')
-            
-        print(words[index], end=' | ')
-        
-    print()
-    print('-' * num_bars)
-
-
-def get_word_index(hashed_words : list[str], name : str) -> int:
-    return hashed_words.index(name)
-
- 
+''' Function to calculate the heuristic value of a ship state '''
 def heuristic(ship : Ship) -> int:
     # Declare variables
     S_COLS = len(ship.bay[0])
@@ -266,10 +228,11 @@ def heuristic(ship : Ship) -> int:
             h_n += abs(S_COLS // 2 - item[2])
         else:
             h_n += abs(S_COLS // 2 - 1 - item[2])
-    
+            
     return h_n
 
 
+''' Function to expand the state of the ship when picking up containers '''
 def expand_pick_up(ship : Ship, seen : set, 
                    S_ROWS : int, S_COLS : int) -> list[Ship]:
     # Declare variables
@@ -290,7 +253,8 @@ def expand_pick_up(ship : Ship, seen : set,
                 break
     return states
                
-    
+
+''' Function to expand the state of the ship when dropping off containers '''
 def expand_drop_off(ship : Ship, seen : set,
                     S_ROWS : int, S_COLS : int) -> list[Ship]:
     # Declare variables
@@ -312,19 +276,68 @@ def expand_drop_off(ship : Ship, seen : set,
                 # Swap the last held container with the empty cell
                 bay[row][col], bay[x][y] = bay[x][y], bay[row][col]
                 
-                # Calculate the cost of the new state
+                # Calculate the cost of the new state and create the ship
                 cost_to_top = abs(x - -1) 
                 cost = cost_to_top + abs(-1 - row) + abs(y - col)
-                
-                # Create the new ship
                 states.append(Ship(bay, ship.last_held, cost))
                 break
     return states
                 
-     
+
+''' Function to create a new manifest file once job has been completed '''   
 def update_manifest(file_name : str, manifest : pd.DataFrame) -> None:
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
+        
+
+''' Function to parse the hashed table into a list of words '''
+def get_hashed_words(table : str) -> list[str]:
+    # Declare variables
+    words = []
+    word = ''
+    
+    # Get the words from the hashed table
+    for index in range(len(table)):
+        if table[index] == '-':
+            words.append(word)
+            word = ''    
+        if table[index] == ' ':
+            word += table[index] 
+        if table[index].isalpha() or table[index] == '+':
+            word += table[index]
+    return words
+
+
+''' Function to print the hashed table with bracket formatting '''
+def print_hash_as_table(words : list[str]) -> None:
+    # Declare variables
+    NUM_BARS = 73
+    
+    # Print the hashed table
+    for index in range(len(words)):
+        if index % 12 == 0:
+            print()
+            print('-' * NUM_BARS)
+            print('|', end=' ')
+        print(words[index], end=' | ')
+    print()
+    print('-' * NUM_BARS)
+
+
+''' Function to print the start of the balance test '''
+def begin_balance_test(ship: Ship, S_COLS: int) -> None:
+    print('Original Ship')
+    print_table(ship.bay, S_COLS)
+    print('left weight: ', ship.get_left_kg(),
+          'right weight: ',ship.get_right_kg())
+    
+
+''' Function to print the end of the balance test '''   
+def end_balance_test(ship: Ship, S_COLS: int) -> None:
+    print('Balanced Ship')
+    print_table(ship.bay, S_COLS)
+    print('left weight: ', ship.get_left_kg(),
+          'right weight: ',ship.get_right_kg())
     
 
 if __name__ == '__main__':

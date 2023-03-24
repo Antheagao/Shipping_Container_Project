@@ -1,1 +1,0 @@
-print_ship(ship, S_COLS)
