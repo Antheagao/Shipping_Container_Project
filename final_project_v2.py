@@ -14,6 +14,7 @@ def main():
     # Declare variables
     file_name = ''
     user_name = ''
+    ship_name = ''
     confirm = ''
     job_type = ''
     running = True
@@ -31,6 +32,8 @@ def main():
     while running:
         # Get the manifest file from the user
         file_name = str(input('Enter the name of the manifest file: '))
+        ship_name = file_name.replace(".txt", "")
+        print(file_name, ship_name)
         
         # Read the manifest file into a dataframe
         manifest = pd.read_csv(file_name, sep=',', header=None, 
@@ -47,8 +50,8 @@ def main():
         ship = Ship(bay, '', 0)
         
         # Ask the user which job they are doing
-        job_type = str(input('Select the job type:\n1. Balance\n'
-                             '2. Unload/Load\nEnter your choice: '))
+        job_type = str(input('Select the job type:\n(1). Balance\n'
+                             '(2). Unload/Load\nEnter your choice: '))
         
         # Begin ship balancing/unloading/loading
         if job_type == '1':
@@ -58,7 +61,7 @@ def main():
             time2 = time.perf_counter()
             print('\nOperations calculated in'
                   ': ', '{:.3f}'.format(time2 - time1), 'seconds\n')
-            perform_balance(ship, operations, manifest)
+            perform_balance(ship, operations, manifest, user_name, ship_name)
         else:
             begin_unload = None
             begin_load = None
@@ -71,10 +74,10 @@ def main():
               'Send the updated manifest to the ship captain.\n')
         confirm = str(input('Enter c to confirm the message was read:'))
         while confirm != 'c':
-            confirm = str(input('Enter c to confirm the message was read:'))
+            confirm = str(input('Enter (c) to confirm the message was read:'))
         
         # Ask the user if they want to work on another ship
-        user_input = str(input('Do you want to continue? (y/n): '))
+        user_input = str(input('Do you want to work on another ship? (y/n): '))
         if user_input == 'y':
             running = True
         else:
@@ -82,7 +85,7 @@ def main():
 
 
 ''' Function to change weight to int and remove whitespace from name '''
-def clean_df(df : pd.DataFrame) -> None:
+def clean_df(df: pd.DataFrame) -> None:
     # Remove the curly braces from the weight column and convert to int
     df["Weight"] = df['Weight'].str.replace(r'{|}', '', regex=True)
     df['Weight'] = df['Weight'].astype('int32')
@@ -93,8 +96,8 @@ def clean_df(df : pd.DataFrame) -> None:
     
 
 ''' Function to build the ship table from the dataframe as a 2d list '''
-def build_ship(ship : list[list[Container]], S_ROWS : int, S_COLS : int,
-               df : pd.DataFrame) -> None:
+def build_ship(ship: list[list[Container]], S_ROWS: int, S_COLS: int,
+               df: pd.DataFrame) -> None:
     # Declare variables
     count = 0
     
@@ -112,7 +115,7 @@ def build_ship(ship : list[list[Container]], S_ROWS : int, S_COLS : int,
 
 
 ''' Function to print the ship table with formatting and bars '''
-def print_table(ship : list[list[Container]], COLS : int) -> None:
+def print_table(ship: list[list[Container]], COLS: int) -> None:
     # Declare variables
     WIDTH = 3
     
@@ -130,7 +133,7 @@ def print_table(ship : list[list[Container]], COLS : int) -> None:
                 
 
 ''' Function to perform a search to find the balanced state of the ship '''
-def a_star(start : Ship, df : pd.DataFrame) -> None:
+def a_star(start: Ship, df: pd.DataFrame) -> None:
     # Declare variables
     S_ROWS = len(start.bay)
     S_COLS = len(start.bay[0])
@@ -176,7 +179,7 @@ def a_star(start : Ship, df : pd.DataFrame) -> None:
 
 
 ''' Function to build path of operators to balance the ship '''
-def create_path(came_from : dict, current : tuple[str, str], 
+def create_path(came_from: dict, current: tuple[str, str], 
                 df: pd.DataFrame) -> list[Operation]:
     # Declare variables
     bay_states = deque(current)
@@ -215,7 +218,7 @@ def create_path(came_from : dict, current : tuple[str, str],
 
 
 ''' Function to calculate the heuristic value of a ship state '''
-def heuristic(ship : Ship) -> int:
+def heuristic(ship: Ship) -> int:
     # Declare variables
     S_COLS = len(ship.bay[0])
     left_kg = ship.get_left_kg()
@@ -258,8 +261,8 @@ def heuristic(ship : Ship) -> int:
 
 
 ''' Function to expand the state of the ship when picking up containers '''
-def expand_pick_up(ship : Ship, seen : set, 
-                   S_ROWS : int, S_COLS : int) -> list[Ship]:
+def expand_pick_up(ship: Ship, seen: set, 
+                   S_ROWS: int, S_COLS: int) -> list[Ship]:
     # Declare variables
     states = []
     cost = 0
@@ -280,8 +283,8 @@ def expand_pick_up(ship : Ship, seen : set,
                
 
 ''' Function to expand the state of the ship when dropping off containers '''
-def expand_drop_off(ship : Ship, seen : set,
-                    S_ROWS : int, S_COLS : int) -> list[Ship]:
+def expand_drop_off(ship: Ship, seen: set,
+                    S_ROWS: int, S_COLS: int) -> list[Ship]:
     # Declare variables
     states = []
     
@@ -310,13 +313,13 @@ def expand_drop_off(ship : Ship, seen : set,
                 
 
 ''' Function to create a new manifest file once job has been completed '''   
-def update_manifest(file_name : str, manifest : pd.DataFrame) -> None:
+def update_manifest(file_name: str, manifest: pd.DataFrame) -> None:
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
         
 
 ''' Function to parse the hashed table into a list of words '''
-def get_hashed_words(table : str) -> list[str]:
+def get_hashed_words(table: str) -> list[str]:
     # Declare variables
     words = []
     word = ''
@@ -334,7 +337,7 @@ def get_hashed_words(table : str) -> list[str]:
 
 
 ''' Function to print the hashed table with bracket formatting '''
-def print_hash_as_table(words : list[str]) -> None:
+def print_hash_as_table(words: list[str]) -> None:
     # Declare variables
     NUM_BARS = 73
     
@@ -366,7 +369,8 @@ def end_balance_test(ship: Ship, S_COLS: int) -> None:
     
 
 def perform_balance(ship: Ship, operations: list[Operation],
-                    manifest: pd.DataFrame) -> None:
+                    manifest: pd.DataFrame, user_name: str,
+                    ship_name: str) -> None:
     num = None 
     '''for operation in operations:
             print(operation.move, operation.index, operation.x,
