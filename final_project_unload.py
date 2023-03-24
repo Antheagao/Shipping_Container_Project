@@ -228,6 +228,11 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
             #get the coordinate of the top-most container that we want to unload
             row,column = final_coordinates[0]
             row = row - finalStacked[0]    #ex (7,8) -> (5,8) for owl test case
+            LeftMinMoves = 10000
+            LeftminX,LeftminY= (-1,-1)
+
+            RightMinMoves = 10000
+            RightminX, RightminY = (-1,-1)
             
 
             for openColLocation in open_columns:
@@ -239,8 +244,19 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
                 #we should save two values, names currMoves and currCords, as well with minMoves and minCords
 
                 if openColLocation < column: #Line 229 column value
-                    currMoves, currCords = ship.move_left(row,column,openColLocation)
+                    #print(open_columns)
+                    currMoves, currCords = ship.move_left((row,column),openColLocation, LeftMinMoves)
+                    #print(currMoves)
+                    #print(currCords)
+                    if currMoves < LeftMinMoves:
+                        LeftMinMoves = currMoves
+                        LeftminX,LeftminY = currCords
 
+                else: #cases for when we move right and up
+                    currMoves, currCords = ship.move_right((row,column), openColLocation, RightMinMoves)
+                    if currMoves < RightMinMoves:
+                        RightMinMoves = currMoves
+                        RightminX,RightminY = currCords
 
 
 
@@ -250,6 +266,18 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
 
             #at the end
             finalStacked[0] = finalStacked[0] - 1
+            if LeftMinMoves < RightMinMoves:
+                move = "Move " + str((row,column)) + " to " + str((LeftminX,LeftminY))
+                totalMoves = totalMoves + LeftMinMoves
+                orderOfMoves.append(move)
+
+
+            else:
+                move = "Move " + str((row,column)) + " to " + str((RightminX,RightminY))
+                totalMoves = totalMoves + RightMinMoves
+                orderOfMoves.append(move)
+
+            #switch containers here
 
 
 
