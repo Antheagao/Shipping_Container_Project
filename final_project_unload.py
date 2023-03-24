@@ -281,6 +281,7 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
 
             #switch containers here
             ship.bay[row][column], ship.bay[smolCoordX][smolCoordY] = ship.bay[smolCoordX][smolCoordY], ship.bay[row][column]
+            #do manifest manip HERE !!!!
 
         row,column = final_coordinates[0]
         totalMoves = totalMoves + abs(row - -1) + abs(column - -1)
@@ -291,7 +292,7 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
 
         #remove container from table
         ship.bay[row][column].name = '   '
-        ship.bay[row][column].weight = 0
+        ship.bay[row][column].weight = 0            #do manifest manip HERE !!!!
 
         #add total moves values from pink star to pick up truck here
         manhattan = manhattan + 2
@@ -308,6 +309,8 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
         finalStacked.pop(0)
 
     #print(orderOfMoves)
+
+    #orderOfMoves stores a string of moves from container to container, when switching containers, we must manipulate manifest
     
     for index, elem in enumerate(movesCoords):
         if (index<(len(movesCoords)-1)):
