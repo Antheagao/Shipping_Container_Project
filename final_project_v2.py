@@ -1,13 +1,15 @@
-import pandas as pd
-import numpy as np
-from objects import Container, Ship, Operation
 from collections import defaultdict
 from collections import deque
 import heapq
 import copy
 import time
 
-        
+import pandas as pd
+import numpy as np
+
+from objects import Container, Ship, Operation
+
+       
 def main():
     # Declare variables
     file_name = ''
@@ -51,6 +53,7 @@ def main():
     '''update_manifest(file_name, manifest)'''
 
 
+''' Function to change weight to int and remove whitespace from name '''
 def clean_df(df : pd.DataFrame) -> None:
     # Remove the curly braces from the weight column and convert to int
     df["Weight"] = df['Weight'].str.replace(r'{|}', '', regex=True)
@@ -61,6 +64,7 @@ def clean_df(df : pd.DataFrame) -> None:
     df['Name'] = df['Name'].str.strip()
     
 
+''' Function to build the ship table from the dataframe as a 2d list '''
 def build_ship(ship : list[list[Container]], S_ROWS : int, S_COLS : int,
                df : pd.DataFrame) -> None:
     # Declare variables
@@ -79,6 +83,7 @@ def build_ship(ship : list[list[Container]], S_ROWS : int, S_COLS : int,
             count += 1
 
 
+''' Function to print the ship table with formatting and bars '''
 def print_table(ship : list[list[Container]], COLS : int) -> None:
     # Declare variables
     WIDTH = 3
@@ -96,6 +101,7 @@ def print_table(ship : list[list[Container]], COLS : int) -> None:
         print()
                 
 
+''' Function to perform a search to find the balanced state of the ship '''
 def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     # Declare variables
     S_ROWS = len(start.bay)
@@ -141,7 +147,8 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     # Ship cannot be balanced, perform SIFT
     return 'failure'
 
- 
+
+''' Function to build path of operators to balance the ship '''
 def create_path(came_from : dict, current : tuple[str, str], 
                 df: pd.DataFrame) -> list[Operation]:
     # Declare variables
@@ -161,7 +168,7 @@ def create_path(came_from : dict, current : tuple[str, str],
     for index in range(1, len(bay_states) - 1): 
         hashed_words = get_hashed_words(bay_states[index])
         operation = Operation('', 0, 0, 0, '', '')
-        false_index = get_word_index(hashed_words, containers_held[index])
+        false_index = hashed_words.index(containers_held[index])
         operation.x = false_index // 12
         operation.y = false_index % 12
         operation.index = (8 - 1 - operation.x) * 12 + operation.y
@@ -181,7 +188,8 @@ def create_path(came_from : dict, current : tuple[str, str],
     # Return the operations 
     return operations
 
- 
+
+''' Function to calculate the heuristic value of a ship state '''
 def heuristic(ship : Ship) -> int:
     # Declare variables
     S_COLS = len(ship.bay[0])
@@ -224,6 +232,7 @@ def heuristic(ship : Ship) -> int:
     return h_n
 
 
+''' Function to expand the state of the ship when picking up containers '''
 def expand_pick_up(ship : Ship, seen : set, 
                    S_ROWS : int, S_COLS : int) -> list[Ship]:
     # Declare variables
@@ -244,7 +253,8 @@ def expand_pick_up(ship : Ship, seen : set,
                 break
     return states
                
-    
+
+''' Function to expand the state of the ship when dropping off containers '''
 def expand_drop_off(ship : Ship, seen : set,
                     S_ROWS : int, S_COLS : int) -> list[Ship]:
     # Declare variables
@@ -275,12 +285,14 @@ def expand_drop_off(ship : Ship, seen : set,
                 break
     return states
                 
-     
+
+''' Function to create a new manifest file once job has been completed '''   
 def update_manifest(file_name : str, manifest : pd.DataFrame) -> None:
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
 
 
+''' Function to parse the manifest index from the hashed table '''
 def parse_manifest_index(hashed_table : str, name : str) -> int:
     # Declare variables
     word_count = 0
@@ -296,6 +308,7 @@ def parse_manifest_index(hashed_table : str, name : str) -> int:
             return word_count
         
 
+''' Function to parse the hashed table into a list of words '''
 def get_hashed_words(table : str) -> list[str]:
     # Declare variables
     words = []
@@ -316,6 +329,7 @@ def get_hashed_words(table : str) -> list[str]:
     return words
 
 
+''' Function to print the hashed table with bracket formatting '''
 def print_hash_as_table(words : list[str]) -> None:
     # Declare variables
     num_bars = 73
@@ -333,17 +347,15 @@ def print_hash_as_table(words : list[str]) -> None:
     print('-' * num_bars)
 
 
-def get_word_index(hashed_words : list[str], name : str) -> int:
-    return hashed_words.index(name)
-
-
+''' Function to print the start of the balance test '''
 def begin_balance_test(ship: Ship, S_COLS: int) -> None:
     print('Original Ship')
     print_table(ship.bay, S_COLS)
     print('left weight: ', ship.get_left_kg(),
           'right weight: ',ship.get_right_kg())
     
-    
+
+''' Function to print the end of the balance test '''   
 def end_balance_test(ship: Ship, S_COLS: int) -> None:
     print('Balanced Ship')
     print_table(ship.bay, S_COLS)
