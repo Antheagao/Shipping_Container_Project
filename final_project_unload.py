@@ -206,7 +206,9 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
 
     orderOfMoves = []
     totalMoves = 0
-
+    movesCoords = []
+    movesCoords.append((-1,-1))
+    manhattan = 0
 
 
     while len(final_coordinates) > 0: #while our final coordinates is not empty...
@@ -258,17 +260,13 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
                         RightMinMoves = currMoves
                         RightminX,RightminY = currCords
 
-
-
-
-
-
-
             #at the end
             finalStacked[0] = finalStacked[0] - 1
             if LeftMinMoves < RightMinMoves:
                 smolCoordX, smolCoordY = LeftminX,LeftminY
                 move = "Move " + str((row,column)) + " to " + str((LeftminX,LeftminY))
+                movesCoords.append((row,column))
+                movesCoords.append((LeftminX,LeftminY))
                 totalMoves = totalMoves + LeftMinMoves
                 orderOfMoves.append(move)
 
@@ -276,55 +274,53 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
             else:
                 smolCoordX, smolCoordY = RightminX,RightminY
                 move = "Move " + str((row,column)) + " to " + str((RightminX,RightminY))
+                movesCoords.append((row,column))
+                movesCoords.append((RightminX,RightminY))
                 totalMoves = totalMoves + RightMinMoves
                 orderOfMoves.append(move)
 
             #switch containers here
             ship.bay[row][column], ship.bay[smolCoordX][smolCoordY] = ship.bay[smolCoordX][smolCoordY], ship.bay[row][column]
-            print_table(ship.bay, 12)
-
-
-
-
-
-
-
-
-
-
-
+            #do manifest manip HERE !!!!
 
         row,column = final_coordinates[0]
         totalMoves = totalMoves + abs(row - -1) + abs(column - -1)
         move = "Move " + str(final_coordinates[0]) + " to (-1, -1)" 
+        movesCoords.append(final_coordinates[0])
+        movesCoords.append((-1,-1))
         orderOfMoves.append(move)
 
         #remove container from table
-        
-        
+        ship.bay[row][column].name = '   '
+        ship.bay[row][column].weight = 0            #do manifest manip HERE !!!!
 
+        #add total moves values from pink star to pick up truck here
+        manhattan = manhattan + 2
+
+        #remove column element from occupied list
+        occupied_columns.remove(column)
+
+        #get open columns again here
+        open_columns = ship.get_open_columns(occupied_columns)
+
+        
+        #print_table(ship.bay, 12)
         final_coordinates.pop(0)
         finalStacked.pop(0)
 
-    print(orderOfMoves)
-        
+    #print(orderOfMoves)
 
-
-
-
-
+    #orderOfMoves stores a string of moves from container to container, when switching containers, we must manipulate manifest
     
+    for index, elem in enumerate(movesCoords):
+        if (index<(len(movesCoords)-1)):
+            currX,currY = elem
+            nextX,nextY = movesCoords[index+1]
+            manhattan = abs(currX - nextX) + abs(currY - nextY) + manhattan
+        else:
+            manhattan = manhattan
 
-
-
-
-
-
-
-        
-    
-
-            
+    #print(manhattan)
 
         
     return 
