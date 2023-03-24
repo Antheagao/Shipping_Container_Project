@@ -70,6 +70,33 @@ class Ship:
                 if self.bay[row][col].name == container:
                     return (row, col)
         return (-1, -1)
+
+    def get_uniq_coordinates(self, container: str, coord: set) -> set:
+        ROW = len(self.bay)
+        COL = len(self.bay[0])
+        
+        for row in range(ROW):
+            for col in range(COL):
+                if self.bay[row][col].name == container and (row,col) not in coord:
+                    x,y = (row,col)
+                    coord.add((x,y))
+
+        return coord
+
+    def get_stacked(self, coords: tuple[int,int]) -> int:
+
+        row,col = coords
+        count = 0
+
+        for x in reversed(range(row)):
+            if self.bay[x][col].name != '   ':
+                count = count + 1
+            else:
+                continue
+
+        return count
+        
+
     
     def get_hash(self):
         state_repr = ""
