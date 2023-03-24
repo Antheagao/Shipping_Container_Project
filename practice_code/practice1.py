@@ -145,8 +145,16 @@ for i in range(len(table)):
         print(table[i][j], end=' ')
     print()'''
     
-table = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+'''table = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
 print(table)
 table = str(table)
 print(table)
-table = table.replace('[', '')
+table = table.replace('[', '')'''
+
+# code to swap manifest values
+df = pd.read_csv('ship_cases/ShipCase1.txt', sep=',', header=None, 
+                     names=['X', 'Y', 'Weight', 'Name'])
+
+df.iloc[0]['Name'], df.iloc[1]['Name'] = df.iloc[1]['Name'], df.iloc[0]['Name'] 
+#df.iloc[0], df.iloc[1] = df.iloc[1].copy(), df.iloc[0].copy()
+df.to_csv('ship_cases/ShipCase1.txt', header=None, index=False)
