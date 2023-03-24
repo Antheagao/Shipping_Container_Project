@@ -14,6 +14,7 @@ def main():
     # Declare variables
     file_name = ''
     user_name = ''
+    confirm = ''
     job_type = ''
     running = True
     B_ROWS = 4
@@ -43,26 +44,36 @@ def main():
         
         # Build the 2d table to represent the ship
         build_ship(bay, S_ROWS, S_COLS, df)
+        ship = Ship(bay, '', 0)
         
         # Ask the user which job they are doing
-        job_type = str(input('Enter the job type:\n1. Balance\n'
-                             '2. Load\n3. Unload\nEnter your choice: '))
+        job_type = str(input('Select the job type:\n1. Balance\n'
+                             '2. Unload/Load\nEnter your choice: '))
         
-        ship = Ship(bay, '', 0)
-        begin_balance_test(ship, S_COLS)
-        time1 = time.perf_counter()
-        operations = a_star(ship, df)
-        time2 = time.perf_counter()
-        print('Time: ', '{:.3f}'.format(time2 - time1), 'seconds')
-        '''for operation in operations:
-            print(operation.move, operation.index, operation.x,
-                  operation.y, operation.name, operation.position)
-            print()'''
+        # Begin ship balancing/unloading/loading
+        if job_type == '1':
+            begin_balance_test(ship, S_COLS)
+            time1 = time.perf_counter()
+            operations = a_star(ship, df)
+            time2 = time.perf_counter()
+            print('\nOperations calculated in'
+                  ': ', '{:.3f}'.format(time2 - time1), 'seconds\n')
+            perform_balance(ship, operations, manifest)
+        else:
+            begin_unload = None
+            begin_load = None
         
-        # Create the updated manifest file
+        # Create the updated manifest file and send it to the ship captain
         '''update_manifest(file_name, manifest)'''
+        file_name = file_name.replace(".txt", "OUTBOUND.txt")
+        print('Finished a job cycle, ', file_name,
+              'was written to desktop. '
+              'Send the updated manifest to the ship captain.\n')
+        confirm = str(input('Enter c to confirm the message was read:'))
+        while confirm != 'c':
+            confirm = str(input('Enter c to confirm the message was read:'))
         
-        # Ask the user if they want to continue
+        # Ask the user if they want to work on another ship
         user_input = str(input('Do you want to continue? (y/n): '))
         if user_input == 'y':
             running = True
@@ -141,7 +152,6 @@ def a_star(start : Ship, df : pd.DataFrame) -> None:
         ship_hash = (ship.get_hash(), ship.last_held)
         seen.add(ship_hash)
         if ship.is_balanced():
-            end_balance_test(ship, S_COLS)
             return create_path(came_from, ship_hash, df)
 
         # Check if the ship is in a state where it can pick up or drop off
@@ -201,8 +211,6 @@ def create_path(came_from : dict, current : tuple[str, str],
             operation.move = 'To '
             operations.append(operation)
             pick_up = True
-            
-    # Return the operations 
     return operations
 
 
@@ -343,7 +351,7 @@ def print_hash_as_table(words : list[str]) -> None:
 
 ''' Function to print the start of the balance test '''
 def begin_balance_test(ship: Ship, S_COLS: int) -> None:
-    print('Original Ship')
+    print('\nShip you are working on:')
     print_table(ship.bay, S_COLS)
     print('left weight: ', ship.get_left_kg(),
           'right weight: ',ship.get_right_kg())
@@ -355,6 +363,15 @@ def end_balance_test(ship: Ship, S_COLS: int) -> None:
     print_table(ship.bay, S_COLS)
     print('left weight: ', ship.get_left_kg(),
           'right weight: ',ship.get_right_kg())
+    
+
+def perform_balance(ship: Ship, operations: list[Operation],
+                    manifest: pd.DataFrame) -> None:
+    num = None 
+    '''for operation in operations:
+            print(operation.move, operation.index, operation.x,
+                    operation.y, operation.name, operation.position)
+            print()'''
     
 
 if __name__ == '__main__':
