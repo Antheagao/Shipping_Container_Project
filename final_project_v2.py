@@ -439,7 +439,6 @@ def perform_balance(ship: Ship, operations: list[Operation],
                 choice = input('Enter (1) to confirm the previous move: ')
         
         # Swap the containers in the ship bay and update the manifest
-       
         ship.bay[x1][y1], ship.bay[x2][y2] = ship.bay[x2][y2], ship.bay[x1][y1]
         manifest.iloc[index1]['Name'], manifest.iloc[index2]['Name'] =\
             manifest.iloc[index2]['Name'], manifest.iloc[index1]['Name']
