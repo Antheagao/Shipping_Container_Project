@@ -14,7 +14,7 @@ from objects import Container, Ship, Operation
 def main():
     # Declare variables
     file_name = 'ship_cases/'
-    log_file_name = 'KoughLongBeach.txt'
+    log_file_name = 'KeoghLongBeach.txt'
     date_time = ''
     user_name = ''
     ship_name = ''
@@ -42,7 +42,7 @@ def main():
     # Loop the program until the user is done working
     while running:
         # Check if log file is still in the same year
-        log_file_name = 'KoughLongBeach.txt'
+        log_file_name = 'KeoghLongBeach.txt'
         date_time = datetime.now().year
         log_file_name = log_file_name.replace('.txt', str(date_time) + '.txt')
         log_file = open(log_file_name, 'a')
@@ -105,6 +105,11 @@ def main():
         confirm = str(input('Enter (c) to confirm the message was read: '))
         while confirm != 'c':
             confirm = str(input('Enter (c) to confirm the message was read: '))
+        date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+        log_file.write(date_time + 'Finished a Cycle. Manifest ' + 
+                       file_name.replace("ship_cases/", "") + 
+                       ' was written to desktop, and a reminder pop-up'
+                       ' to operator to send file was displayed.\n')
         
         # Ask the user if they want to work on another ship
         user_input = str(input('Do you want to work on another ship? (y/n): '))

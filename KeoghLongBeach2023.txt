@@ -1,0 +1,8 @@
+
+March 24 2023: 16:46 Mike Fox signs in
+March 24 2023: 16:46 Mike Fox signs in
+March 24 2023: 16:47 Manifest ShipCase1.txt is opened, there are 2 containers on the ship
+March 24 2023: 16:47 Mike Fox signs out
+March 24 2023: 16:47 bruv signs in
+March 24 2023: 16:47 Finished a Cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
+March 24 2023: 16:47 bruv signs out
