@@ -162,7 +162,7 @@ df.iloc[0]['Name'], df.iloc[1]['Name'] = df.iloc[1]['Name'], df.iloc[0]['Name']
 df.to_csv('ship_cases/ShipCase1.txt', header=None, index=False)'''
 
 # code to get the current date and time
-today = date.today()
+'''today = date.today()
 print("Today's date:", today)
 d2 = today.strftime("%B %d %Y")
 print("d2 =", d2)
@@ -171,3 +171,13 @@ now = datetime.now()
 print("now =", now)
 dt_string = now.strftime("%B %d %Y: %H:%M")
 print("date and time =", dt_string)
+year = datetime.now().year
+print(year)
+
+date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+print(date_time)'''
+log_file_name = 'KoughLongBeach.txt'
+date_time = datetime.now().year
+log_file_name = log_file_name.replace('.txt', str(date_time) + '.txt')
+date_time = datetime.now().strftime("%B %d %Y: %H:%M")
+log_file = open(log_file_name, 'a')

@@ -1,5 +1,6 @@
 from collections import defaultdict
 from collections import deque
+from datetime import datetime
 import heapq
 import copy
 import time
@@ -13,6 +14,8 @@ from objects import Container, Ship, Operation
 def main():
     # Declare variables
     file_name = 'ship_cases/'
+    log_file_name = 'KoughLongBeach.txt'
+    date_time = ''
     user_name = ''
     ship_name = ''
     confirm = ''
@@ -26,11 +29,24 @@ def main():
     bay = [[Container('', 0) for i in range(S_COLS)] for j in range(S_ROWS)]
     buffer = [[Container('', 0) for i in range(B_COLS)] for j in range(B_ROWS)]
     
+    # Get date and time values for the log file
+    date_time = datetime.now().year
+    log_file_name = log_file_name.replace('.txt', str(date_time) + '.txt')
+    log_file = open(log_file_name, 'a')
+        
     # Have the user sign in and get the manifest file
     user_name = str(input('Enter your name to sign in: '))
+    date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+    log_file.write(date_time + user_name + ' signs in\n')
     
     # Loop the program until the user is done working
     while running:
+        # Check if log file is still in the same year
+        log_file_name = 'KoughLongBeach.txt'
+        date_time = datetime.now().year
+        log_file_name = log_file_name.replace('.txt', str(date_time) + '.txt')
+        log_file = open(log_file_name, 'a')
+        
         # Get the manifest file from the user
         file_name = 'ship_cases/'
         file_name += str(input('Enter the name of the manifest file: '))
@@ -68,7 +84,8 @@ def main():
             print('Estimated time to balance:',
                   calculate_time(operations), 'minutes\n')
             user_name = balancing(ship, operations,
-                                  manifest, user_name, ship_name)
+                                  manifest, user_name,
+                                  ship_name, log_file)
         else:
             begin_unload = None
             begin_load = None
@@ -79,21 +96,29 @@ def main():
         print('\n\nFinished a job cycle,', file_name,
               'was written to desktop.\n'
               'Send the updated manifest to the ship captain.\n')
-        confirm = str(input('Enter (c) to confirm the message was read:'))
+        confirm = str(input('Enter (c) to confirm the message was read: '))
         while confirm != 'c':
-            confirm = str(input('Enter (c) to confirm the message was read:'))
+            confirm = str(input('Enter (c) to confirm the message was read: '))
         
         # Ask the user if they want to work on another ship
         user_input = str(input('Do you want to work on another ship? (y/n): '))
         if user_input == 'y':
             running = True
             user_input = str(input('Do you want to change user? (y/n): '))
-            if user_input == 'y':
-                user_name = str(input('Enter your name to sign in: '))
             while user_input != 'y' and user_input != 'n':
                 user_input = str(input('Do you want to change user? (y/n): '))
+            if user_input == 'y':
+                date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+                log_file.write(date_time + user_name + ' signs out\n')
+                user_name = str(input('Enter your name to sign in: '))
+                date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+                log_file.write(date_time + user_name + ' signs in\n')
         else:
             running = False
+    # Write the user signing out to the log file
+    date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+    log_file.write(date_time + user_name + ' signs out\n')
+    log_file.close()
 
 
 ''' Function to change weight to int and remove whitespace from name '''
@@ -416,8 +441,8 @@ def display_ship_status(ship: Ship, ship_name: str, user_name: str) -> None:
 
 ''' Function to let the operator perform the operations on the ship '''
 def balancing(ship: Ship, operations: list[Operation],
-                    manifest: pd.DataFrame, user_name: str,
-                    ship_name: str) -> str:
+              manifest: pd.DataFrame, user_name: str,
+              ship_name: str, log_file: str) -> str:
     # Have the operator perform the operations on the ship
     print('<' * 23,'Begin balancing the ship', '>' * 23, '\n')
     for index in range(0, len(operations), 2):
@@ -439,7 +464,11 @@ def balancing(ship: Ship, operations: list[Operation],
             choice = input('Enter (1) to confirm the move '
                            'or (2) to switch user: ')
         if choice == '2':
+            date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+            log_file.write(date_time + user_name + ' signs out\n')
             user_name = input('Enter your name to sign in: ')
+            date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+            log_file.write(date_time + user_name + ' signs in\n')
             choice = input('Enter (1) to confirm the previous move: ')
             while choice != '1':
                 choice = input('Enter (1) to confirm the previous move: ')
