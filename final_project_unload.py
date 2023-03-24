@@ -161,6 +161,7 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
             for val in coordinates:
                 row,column = val
                 stackedCrates = ship.get_stacked((row,column))
+                stackedCrates = stackedCrates + abs(row - -1) + abs(column - -1)
                 minList.append(stackedCrates)
             finalXy = coordinates[minList.index(min(minList))]
             final_coordinates.append(finalXy)
@@ -179,6 +180,7 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
             for val in coordinates:
                 row,column = val
                 stackedCrates = ship.get_stacked((row,column))
+                stackedCrates = stackedCrates + abs(row - -1) + abs(column - -1) #calculates distance from drop off to unloading container + takes into account amount of containers stacked on top of it
                 minList.append(stackedCrates)
             finalXy = coordinates[minList.index(min(minList))]
             final_coordinates.append(finalXy)
