@@ -71,7 +71,7 @@ class Ship:
                     return (row, col)
         return (-1, -1)
 
-    def get_uniq_coordinates(self, container: str, coord: set) -> set:
+    def get_uniq_coordinates(self, container: str, coord: tuple[int,int]) -> set:
         ROW = len(self.bay)
         COL = len(self.bay[0])
         
@@ -79,7 +79,7 @@ class Ship:
             for col in range(COL):
                 if self.bay[row][col].name == container and (row,col) not in coord:
                     x,y = (row,col)
-                    coord.add((x,y))
+                    coord.append((x,y))
 
         return coord
 

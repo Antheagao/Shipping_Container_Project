@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from objects import Container, Ship
+from objects2 import Container, Ship
 from collections import defaultdict
 from collections import deque
 import heapq
@@ -148,22 +148,58 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
 
     #if dupes length == 0, then we have all unique containers, else we must get multiple container coordinates that must be unique
 
+    final_coordinates = []
     if len(dupes) == 0:
         #all containers are unique, check to see if multiple names of the unique containers exists in manifest
-        final_coordinates = set()
-        minList = []
+        
         for i in uniq_containers:
-            coordinates = set()
+            minList = []
+            coordinates = []
             x, y = ship.get_coordinates(i)
-            coordinates.add((x,y))
+            coordinates.append((x,y))
             coordinates= ship.get_uniq_coordinates(i, coordinates)
             for val in coordinates:
                 row,column = val
                 stackedCrates = ship.get_stacked((row,column))
                 minList.append(stackedCrates)
-            print(coordinates)
-            print("\n")
-            print(minList)
+            finalXy = coordinates[minList.index(min(minList))]
+            final_coordinates.append(finalXy)
+
+        #print(final_coordinates)
+
+    else: #example, we want to unload "Cat", "Cat", "Dog". but 3 "Cats" exist
+        #not all containers are uniq, 
+
+        for i in uniq_containers:
+            minList = []
+            coordinates = []
+            x, y = ship.get_coordinates(i)
+            coordinates.append((x,y))
+            coordinates= ship.get_uniq_coordinates(i, coordinates)
+            for val in coordinates:
+                row,column = val
+                stackedCrates = ship.get_stacked((row,column))
+                minList.append(stackedCrates)
+            finalXy = coordinates[minList.index(min(minList))]
+            final_coordinates.append(finalXy)
+
+            for j in dupes:
+                if j == i:
+                    minList.remove(min(minList)) #removes minimum value from minList
+                    coordinates.remove(finalXy) 
+                    finalXy = coordinates[minList.index(min(minList))]
+                    final_coordinates.append(finalXy)
+    #collected all coordinates we need for unloading, did checks for dupes, and everything to get best coordinates available,
+    print(final_coordinates)
+
+
+
+
+
+        
+    
+
+            
 
         
     return 
