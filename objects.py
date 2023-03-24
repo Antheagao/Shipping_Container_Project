@@ -1,9 +1,18 @@
+''' Container class represents a container in the ship's bay.
+    It has a name and a weight.
+'''
 class Container:
     def __init__(self, name: str, weight: int):
         self.name = name
         self.weight = weight
         
 
+''' Operation class represents an operation that can be performed on the ship.
+    It has a move for pick up and drop off, index for the real dataframe 
+    index of the manifest, x as the 2d table x position, y as the 2d table
+    y position, name for the container name, and position for the [x,y] 
+    coordinate in the manifest.
+'''
 class Operation:
     def __init__(self, move: str, index: int, x: int, y: int, name: str, 
                  position: str):
@@ -15,6 +24,10 @@ class Operation:
         self.position = position
 
 
+''' Ship class represents a ship in the simulation. It has a bay which holds
+    a 2d table of containers, last_held for the last held container,
+    and cost for movement between pick ups and drop offs.
+'''
 class Ship:
     def __init__(self, bay: list[list[Container]], last_held: str, cost: int):
         self.bay = bay
