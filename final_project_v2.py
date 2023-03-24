@@ -22,6 +22,7 @@ def main():
     B_COLS = 24
     S_ROWS = 8
     S_COLS = 12
+    operations = []
     bay = [[Container('', 0) for i in range(S_COLS)] for j in range(S_ROWS)]
     buffer = [[Container('', 0) for i in range(B_COLS)] for j in range(B_ROWS)]
     
@@ -55,12 +56,14 @@ def main():
         
         # Begin ship balancing/unloading/loading
         if job_type == '1':
-            begin_balance_test(ship, S_COLS)
+            display_ship_status(ship, ship_name, user_name)
             time1 = time.perf_counter()
             operations = a_star(ship, df)
             time2 = time.perf_counter()
             print('\nOperations calculated in'
-                  ': ', '{:.3f}'.format(time2 - time1), 'seconds\n')
+                  ':', '{:.3f}'.format(time2 - time1), 'seconds\n')
+            print('Estimated time to balance:',
+                  calculate_time(operations), 'minutes\n')
             perform_balance(ship, operations, manifest, user_name, ship_name)
         else:
             begin_unload = None
@@ -69,8 +72,8 @@ def main():
         # Create the updated manifest file and send it to the ship captain
         '''update_manifest(file_name, manifest)'''
         file_name = file_name.replace(".txt", "OUTBOUND.txt")
-        print('Finished a job cycle, ', file_name,
-              'was written to desktop. '
+        print('Finished a job cycle,', file_name,
+              'was written to desktop.\n'
               'Send the updated manifest to the ship captain.\n')
         confirm = str(input('Enter c to confirm the message was read:'))
         while confirm != 'c':
@@ -133,7 +136,7 @@ def print_table(ship: list[list[Container]], COLS: int) -> None:
                 
 
 ''' Function to perform a search to find the balanced state of the ship '''
-def a_star(start: Ship, df: pd.DataFrame) -> None:
+def a_star(start: Ship, df: pd.DataFrame) -> list[Operation] or str:
     # Declare variables
     S_ROWS = len(start.bay)
     S_COLS = len(start.bay[0])
@@ -366,16 +369,54 @@ def end_balance_test(ship: Ship, S_COLS: int) -> None:
     print_table(ship.bay, S_COLS)
     print('left weight: ', ship.get_left_kg(),
           'right weight: ',ship.get_right_kg())
-    
 
+
+''' Function to calculate the estimated time to balance the ship '''
+def calculate_time(operations: list[Operation]) -> int:
+    # Declare variables
+    minutes = 0
+    virtual_x = -1
+    virtual_y = 0
+    can_pickup = True
+    last_position_y = 0
+    
+    # Calculate the estimated time to balance the ship in minutes
+    for operation in operations:
+        if can_pickup:
+            minutes += abs(virtual_x - operation.x) +\
+                       abs(virtual_y - operation.y) + abs(operation.x - -1)
+            last_position_y = operation.y
+            can_pickup = False
+        else:
+            minutes += abs(virtual_x - operation.x) +\
+                       abs(last_position_y - operation.y)
+            can_pickup = True
+    return minutes
+
+
+''' Function to print the ship name, operator name, and ship containers '''
+def display_ship_status(ship: Ship, ship_name: str, user_name: str) -> None:
+    S_COLS = len(ship.bay[0])
+    print()
+    print('Ship Name:', ship_name, '\t\tOperator:', user_name)
+    print_table(ship.bay, S_COLS)
+    print('left weight:', ship.get_left_kg(),
+          '\t\tright weight:', ship.get_right_kg())
+  
+
+''' Function to let the operator perform the operations on the ship '''
 def perform_balance(ship: Ship, operations: list[Operation],
                     manifest: pd.DataFrame, user_name: str,
                     ship_name: str) -> None:
-    num = None 
-    '''for operation in operations:
-            print(operation.move, operation.index, operation.x,
-                    operation.y, operation.name, operation.position)
-            print()'''
+    print('Begin balancing the ship')
+    for index in range(0, len(operations), 2):
+        display_ship_status(ship, ship_name, user_name)
+        print(operations[index].move, operations[index].position, '',
+              operations[index + 1].move, operations[index + 1].position)
+        print()
+        print()
+    
+    
     
 
 if __name__ == '__main__':
