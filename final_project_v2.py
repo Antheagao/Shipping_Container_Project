@@ -106,7 +106,7 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     # Declare variables
     S_ROWS = len(start.bay)
     S_COLS = len(start.bay[0])
-    can_drop_off = False
+    can_pick_up = True
     open_set = []
     states = []
     seen = set()
@@ -119,7 +119,7 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     f_score[start_hash] = heuristic(start)
     
     # Find the shortest path to a balanced ship if it exists
-    while len(open_set) > 0:
+    while open_set:
         ship = heapq.heappop(open_set)
         ship_hash = (ship.get_hash(), ship.last_held)
         seen.add(ship_hash)
@@ -128,12 +128,12 @@ def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
             return create_path(came_from, ship_hash, df)
 
         # Check if the ship is in a state where it can pick up or drop off
-        if can_drop_off == False:
+        if can_pick_up:
             states = expand_pick_up(ship, seen, S_ROWS, S_COLS)
-            can_drop_off = True
+            can_pick_up = False
         else:
             states = expand_drop_off(ship, seen, S_ROWS, S_COLS)
-            can_drop_off = False
+            can_pick_up = True
         for state in states:
             neighbor_hash = (state.get_hash(), state.last_held)
             temp_g_score = g_score[ship_hash] + state.cost
@@ -173,9 +173,9 @@ def create_path(came_from : dict, current : tuple[str, str],
         operation.y = false_index % 12
         operation.index = (8 - 1 - operation.x) * 12 + operation.y
         operation.name = containers_held[index]
-        operation.position = str(df.iloc[operation.index]['X']) + ',' + \
-                             str(df.iloc[operation.index]['Y'])
-        
+        operation.position = str(df.iloc[operation.index]['X'])\
+                             + ','\
+                             + str(df.iloc[operation.index]['Y'])
         if pick_up == True:
             operation.move = 'Move '
             operations.append(operation)
@@ -228,7 +228,7 @@ def heuristic(ship : Ship) -> int:
             h_n += abs(S_COLS // 2 - item[2])
         else:
             h_n += abs(S_COLS // 2 - 1 - item[2])
-    
+            
     return h_n
 
 
@@ -276,11 +276,9 @@ def expand_drop_off(ship : Ship, seen : set,
                 # Swap the last held container with the empty cell
                 bay[row][col], bay[x][y] = bay[x][y], bay[row][col]
                 
-                # Calculate the cost of the new state
+                # Calculate the cost of the new state and create the ship
                 cost_to_top = abs(x - -1) 
                 cost = cost_to_top + abs(-1 - row) + abs(y - col)
-                
-                # Create the new ship
                 states.append(Ship(bay, ship.last_held, cost))
                 break
     return states
@@ -290,22 +288,6 @@ def expand_drop_off(ship : Ship, seen : set,
 def update_manifest(file_name : str, manifest : pd.DataFrame) -> None:
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
-
-
-''' Function to parse the manifest index from the hashed table '''
-def parse_manifest_index(hashed_table : str, name : str) -> int:
-    # Declare variables
-    word_count = 0
-    
-    # Find the index of the word in the hashed table
-    for i in range(len(hashed_table) - 2):
-        if hashed_table[i] == ';':
-            word_count += 1
-            
-        if hashed_table[i] == name[0] and \
-           hashed_table[i + 1] == name[1] and \
-           hashed_table[i + 2] == name[2]:
-            return word_count
         
 
 ''' Function to parse the hashed table into a list of words '''
@@ -315,36 +297,31 @@ def get_hashed_words(table : str) -> list[str]:
     word = ''
     
     # Get the words from the hashed table
-    for i in range(len(table)):
-        if table[i] == '-':
+    for index in range(len(table)):
+        if table[index] == '-':
             words.append(word)
-            word = ''
-            
-        if table[i] == ' ':
-            word += table[i]
-            
-        if table[i].isalpha() or table[i] == '+':
-            word += table[i]
-    
+            word = ''    
+        if table[index] == ' ':
+            word += table[index] 
+        if table[index].isalpha() or table[index] == '+':
+            word += table[index]
     return words
 
 
 ''' Function to print the hashed table with bracket formatting '''
 def print_hash_as_table(words : list[str]) -> None:
     # Declare variables
-    num_bars = 73
+    NUM_BARS = 73
     
     # Print the hashed table
     for index in range(len(words)):
         if index % 12 == 0:
             print()
-            print('-' * num_bars)
+            print('-' * NUM_BARS)
             print('|', end=' ')
-            
         print(words[index], end=' | ')
-        
     print()
-    print('-' * num_bars)
+    print('-' * NUM_BARS)
 
 
 ''' Function to print the start of the balance test '''
