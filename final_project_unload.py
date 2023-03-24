@@ -267,17 +267,23 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
             #at the end
             finalStacked[0] = finalStacked[0] - 1
             if LeftMinMoves < RightMinMoves:
+                smolCoordX, smolCoordY = LeftminX,LeftminY
                 move = "Move " + str((row,column)) + " to " + str((LeftminX,LeftminY))
                 totalMoves = totalMoves + LeftMinMoves
                 orderOfMoves.append(move)
 
 
             else:
+                smolCoordX, smolCoordY = RightminX,RightminY
                 move = "Move " + str((row,column)) + " to " + str((RightminX,RightminY))
                 totalMoves = totalMoves + RightMinMoves
                 orderOfMoves.append(move)
 
             #switch containers here
+            ship.bay[row][column], ship.bay[smolCoordX][smolCoordY] = ship.bay[smolCoordX][smolCoordY], ship.bay[row][column]
+            print_table(ship.bay, 12)
+
+
 
 
 
@@ -292,9 +298,13 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
         totalMoves = totalMoves + abs(row - -1) + abs(column - -1)
         move = "Move " + str(final_coordinates[0]) + " to (-1, -1)" 
         orderOfMoves.append(move)
+
+        #remove container from table
+        
         
 
         final_coordinates.pop(0)
+        finalStacked.pop(0)
 
     print(orderOfMoves)
         
