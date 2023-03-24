@@ -12,7 +12,7 @@ from objects import Container, Ship, Operation
        
 def main():
     # Declare variables
-    file_name = ''
+    file_name = 'ship_cases/'
     user_name = ''
     ship_name = ''
     confirm = ''
@@ -32,7 +32,8 @@ def main():
     # Loop the program until the user is done working
     while running:
         # Get the manifest file from the user
-        file_name = str(input('Enter the name of the manifest file: '))
+        file_name = 'ship_cases/'
+        file_name += str(input('Enter the name of the manifest file: '))
         ship_name = file_name.replace(".txt", "")
         print(file_name, ship_name)
         
@@ -317,6 +318,7 @@ def expand_drop_off(ship: Ship, seen: set,
 
 ''' Function to create a new manifest file once job has been completed '''   
 def update_manifest(file_name: str, manifest: pd.DataFrame) -> None:
+    file_name = file_name.replace('ship_cases/', 'ship_cases_outbound/')
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
         
