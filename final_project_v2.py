@@ -13,6 +13,9 @@ from objects import Container, Ship, Operation
 def main():
     # Declare variables
     file_name = ''
+    user_name = ''
+    job_type = ''
+    running = True
     B_ROWS = 4
     B_COLS = 24
     S_ROWS = 8
@@ -20,37 +23,51 @@ def main():
     bay = [[Container('', 0) for i in range(S_COLS)] for j in range(S_ROWS)]
     buffer = [[Container('', 0) for i in range(B_COLS)] for j in range(B_ROWS)]
     
-    # Get the manifest file from the user
-    '''file_name = str(input('Enter the name of the manifest file: '))'''
-    file_name = 'ShipCase1.txt'
+    # Have the user sign in and get the manifest file
+    user_name = str(input('Enter your name to sign in: '))
     
-    # Read the manifest file into a dataframe
-    manifest = pd.read_csv(file_name, sep=',', header=None, 
-                           names=['X', 'Y', 'Weight', 'Name'])
-    df = pd.read_csv(file_name, sep=',', header=None, 
-                     names=['X', 'Y', 'Weight', 'Name'])
-    
-    # Clean the dataframe
-    clean_df(df)
-    print(df)
-    
-    # Build the 2d table to represent the ship
-    build_ship(bay, S_ROWS, S_COLS, df)
-    
-    # Balance the ship
-    ship = Ship(bay, '', 0)
-    begin_balance_test(ship, S_COLS)
-    time1 = time.perf_counter()
-    operations = a_star(ship, df, manifest)
-    time2 = time.perf_counter()
-    print('Time: ', '{:.3f}'.format(time2 - time1), 'seconds')
-    '''for operation in operations:
-        print(operation.move, operation.index, operation.x,
-              operation.y, operation.name, operation.position)
-        print()'''
-    
-    # Create the updated manifest file
-    '''update_manifest(file_name, manifest)'''
+    # Loop the program until the user is done working
+    while running:
+        # Get the manifest file from the user
+        file_name = str(input('Enter the name of the manifest file: '))
+        
+        # Read the manifest file into a dataframe
+        manifest = pd.read_csv(file_name, sep=',', header=None, 
+                               names=['X', 'Y', 'Weight', 'Name'])
+        df = pd.read_csv(file_name, sep=',', header=None, 
+                         names=['X', 'Y', 'Weight', 'Name'])
+        
+        # Clean the dataframe
+        clean_df(df)
+        print(df)
+        
+        # Build the 2d table to represent the ship
+        build_ship(bay, S_ROWS, S_COLS, df)
+        
+        # Ask the user which job they are doing
+        job_type = str(input('Enter the job type:\n1. Balance\n'
+                             '2. Load\n3. Unload\nEnter your choice: '))
+        
+        ship = Ship(bay, '', 0)
+        begin_balance_test(ship, S_COLS)
+        time1 = time.perf_counter()
+        operations = a_star(ship, df)
+        time2 = time.perf_counter()
+        print('Time: ', '{:.3f}'.format(time2 - time1), 'seconds')
+        '''for operation in operations:
+            print(operation.move, operation.index, operation.x,
+                  operation.y, operation.name, operation.position)
+            print()'''
+        
+        # Create the updated manifest file
+        '''update_manifest(file_name, manifest)'''
+        
+        # Ask the user if they want to continue
+        user_input = str(input('Do you want to continue? (y/n): '))
+        if user_input == 'y':
+            running = True
+        else:
+            running = False
 
 
 ''' Function to change weight to int and remove whitespace from name '''
@@ -102,7 +119,7 @@ def print_table(ship : list[list[Container]], COLS : int) -> None:
                 
 
 ''' Function to perform a search to find the balanced state of the ship '''
-def a_star(start : Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
+def a_star(start : Ship, df : pd.DataFrame) -> None:
     # Declare variables
     S_ROWS = len(start.bay)
     S_COLS = len(start.bay[0])
