@@ -566,6 +566,8 @@ def loading(ship: Ship,  manifest : pd.DataFrame, log_file: str) -> None:
     movesCoords = []  # Has all the coordinates moves 
     manhattan = 0  # Keeps track of total time, taken at the end
 
+    bays = []
+
     if len(open_columns) == 0:
         #ship full
         print("Ship at max capacity to load, cannot proceed further")
@@ -600,6 +602,8 @@ def loading(ship: Ship,  manifest : pd.DataFrame, log_file: str) -> None:
 
         #get open columns again here
         open_columns = ship.get_open_columns(occupied_columns)
+        bay = copy.deepcopy(ship.bay)
+        bays.append(bay)
         #print_table(ship.bay, 12)
         final_coordinates.pop(0)
         load_containers.pop(0)
@@ -625,7 +629,7 @@ def loading(ship: Ship,  manifest : pd.DataFrame, log_file: str) -> None:
     outputString = "\n\nCompleted loading operations.\n\nEstimated Time of completion for moving steps: " + str(manhattan) + " minutes.\n\n"
     print(outputString)
 
-    print("Beginning to print the order of moves to make to load the containers.\n" )
+    print("Beginning to print the order of moves to LOAD the containers.\n" )
 
     while len(movesCoords) > 0: #while movesCoords is not empty
         fromX,fromY = movesCoords[0]
@@ -660,6 +664,8 @@ def loading(ship: Ship,  manifest : pd.DataFrame, log_file: str) -> None:
         stepString = "Move container \"" + containerName + "\" from crate truck to [" + stringCoordinatesX + ", " + stringCoordinatesY + "]"
 
         print(stepString)
+        print_table(bays[0],12)
+        bays.pop(0)
 
         #get user input here to see if we continue or if we add a comment
         choice = input('Enter (1) to confirm the move, '
@@ -695,7 +701,7 @@ def loading(ship: Ship,  manifest : pd.DataFrame, log_file: str) -> None:
                 log_file.write(date_time + '\"' + containerName + ' \" is onloaded.\n' )
 
 
-        print_table(ship.bay, 12)
+
 
 
 
