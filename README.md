@@ -1,7 +1,7 @@
 # cs_179M_Project
 Final working file is: `final_project_v3.py`
 
-Final object import file is: `Object3.py`
+Final object import file is: `objects3.py`
 
 Ship cases are located in the folder: `ship_cases`
 
