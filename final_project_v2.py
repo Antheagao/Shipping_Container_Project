@@ -83,6 +83,10 @@ def main():
         
         # Begin ship balancing/unloading/loading
         if job_type == '1':
+            if ship.get_container_count() == 0:
+                print('\nThere are no containers on the ship,'
+                      ' please select another job type.\n')
+                continue
             time1 = time.perf_counter()
             operations = a_star(ship, df)
             time2 = time.perf_counter()
@@ -495,6 +499,9 @@ def balancing(ship: Ship, operations: list[Operation],
             date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
             message = input('Enter the issue: ')
             log_file.write(date_time + message + '\n')
+            choice = input('Enter (1) to confirm the previous move: ')
+            while choice != '1':
+                choice = input('Enter (1) to confirm the previous move: ')
         
         # Swap the containers in the ship bay and update the manifest
         ship.bay[x1][y1], ship.bay[x2][y2] = ship.bay[x2][y2], ship.bay[x1][y1]
