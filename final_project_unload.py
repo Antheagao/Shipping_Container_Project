@@ -54,7 +54,11 @@ def main():
     """
 
     #unloading operation function
-    unloading(ship, df, manifest)
+
+    #unloading(ship, df, manifest)
+
+    #loading operation function
+    loading(ship, df, manifest)
 
 
 
@@ -327,6 +331,91 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
 
 
     
+def loading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
+
+    #enter the label of the container along with the weight you want to give it
+    load_containers = []
+    load_weight = []
+    final_coordinates = []
+
+    print('Enter the label of the container you wish to load\n Press \'ENTER\' and then type the weight, click \'ENTER\' when done')
+    print('If no more containers to load, press \'ENTER\' without typing anything when asked for label of container')
+    new_container = input("Enter container label: ")
+    while new_container != '': #empty string
+        weightString = "Enter " + new_container + "\'s weight: "
+        new_container_weight = input(weightString)
+        load_containers.append(new_container)
+        load_weight.append(new_container_weight)
+        final_coordinates.append((-1,-1)) #adds to the list each time as this is our starting point each time
+        new_container = input("Enter container name: ")
+
+    print(load_containers)
+    print(load_weight)
+
+    #similar to unloading minMoves, except we keep track of moves per container
+    #find all open columns where we can move
+    #calc manhattan distance from 
+    #should do a while loop that goes through all load_containers list, and after we load, we pop, only when we have an empty list do we stop loading process
+
+    occupied_columns = []
+    open_columns = []
+
+    #get a list of columns that have open slots to load my containers
+    open_columns = ship.get_open_columns(occupied_columns) 
+
+    orderOfMoves = [] #list of strings that state each operation that crane operator has to do, ex : Move (-1,-1) to (4,0)
+    movesCoords = [] #has all the coordinates moves 
+    manhattan = 0 #keeps track of total time, taken at the end
+
+    while len(final_coordinates) > 0: #while our final coordinates is not empty...
+        row,column = final_coordinates[0]
+        MinMoves = 10000
+        minX,minY= (-1,-1)
+
+        for openColLocation in open_columns:
+            currMoves, currCords = ship.load((row,column),openColLocation, MinMoves)
+
+            if currMoves < MinMoves:
+                        MinMoves = currMoves
+                        minX,minY = currCords
+
+            
+        move = "Move " + str((row,column)) + " to " + str((minX,minY))
+
+        movesCoords.append((row,column))
+        movesCoords.append((minX,minY))
+        orderOfMoves.append(move)
+
+        #add container to table
+        ship.bay[minX][minY].name = load_containers[0]
+        ship.bay[minX][minY].weight = load_weight[0]          #do manifest manip HERE !!!!
+
+        #add total moves values from pink star to pick up truck here
+        manhattan = manhattan + 2
+
+        #get open columns again here
+        open_columns = ship.get_open_columns(occupied_columns)
+
+        
+        print_table(ship.bay, 12)
+        final_coordinates.pop(0)
+        load_containers.pop(0)
+        load_weight.pop(0)
+
+    #orderOfMoves stores a string of moves from container to container, when switching containers, we must manipulate manifest
+    #print(orderOfMoves)
+    #print(movesCoords)
+    for index, elem in enumerate(movesCoords):
+        if (index<(len(movesCoords)-1)):
+            currX,currY = elem
+            nextX,nextY = movesCoords[index+1]
+            manhattan = abs(currX - nextX) + abs(currY - nextY) + manhattan
+        else:
+            manhattan = manhattan
+
+    #print(manhattan)
+
+    return
 
     
 
