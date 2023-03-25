@@ -184,8 +184,22 @@ date_time = datetime.now().strftime("%B %d %Y: %H:%M")
 name ='C:\\Users\\Anthony\\OneDrive\\Desktop\\' + 'yeet.txt'
 log_file = open(name, 'a')
 log_file.write('OKAY' + '\n')'''
-username = os.getlogin()
+'''username = os.getlogin()
 file_name = 'C:\\Users\\' + username + '\\OneDrive\\Desktop\\' + 'yeet.txt'
 file = open(file_name, 'a')
 file.write('YUH' + '\n')
-file.close()
+file.close()'''
+
+'''df = pd.read_csv('ship_cases/ShipCase1.txt', sep=',', header=None, 
+                     names=['X', 'Y', 'Weight', 'Info'])
+print(df)
+df.iloc[1]['Info'] = 'BRU'
+df.iloc[1]['Weight'] = '{50000}'
+print(df)'''
+
+from collections import deque
+
+br = deque()
+br.append(1)
+br.append(2)
+print(str(br))
