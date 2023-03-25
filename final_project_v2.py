@@ -514,5 +514,6 @@ def balancing(ship: Ship, operations: list[Operation],
     display_ship_status(ship, ship_name, user_name)
     return user_name
 
+
 if __name__ == '__main__':
     main()
