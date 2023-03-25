@@ -116,7 +116,7 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     #ask user to type container name, followed by enter to enter it
     #if done with typing, simply click enter with an empty string
 
-    print('Enter the names of the containers you wish to unload\nIf done entering container labels, click \'ENTER\' without typing.')
+    print('Enter the names of the containers you wish to unload\nIf done entering container labels or not unloading, click \'ENTER\' without typing.')
 
     new_container = input("Enter container name: ")
     
@@ -130,6 +130,10 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
         new_container = input("Enter container name: ")
     
     #done collecting array of strings that container all containers we wish to unload
+    if len(unload_containers) == 0: #no containers inputted:
+        return
+    
+
 
     seen_containers = set()
     uniq_containers = []
@@ -339,7 +343,7 @@ def loading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     final_coordinates = []
 
     print('Enter the label of the container you wish to load\n Press \'ENTER\' and then type the weight, click \'ENTER\' when done')
-    print('If no more containers to load, press \'ENTER\' without typing anything when asked for label of container')
+    print('If no more containers to load or not loading, press \'ENTER\' without typing anything when asked for label of container')
     new_container = input("Enter container label: ")
     while new_container != '': #empty string
         weightString = "Enter " + new_container + "\'s weight: "
@@ -351,6 +355,10 @@ def loading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
 
     print(load_containers)
     print(load_weight)
+
+    if load_containers == 0:
+        #no containers loading so we only unloaded
+        return
 
     #similar to unloading minMoves, except we keep track of moves per container
     #find all open columns where we can move
@@ -366,6 +374,11 @@ def loading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     orderOfMoves = [] #list of strings that state each operation that crane operator has to do, ex : Move (-1,-1) to (4,0)
     movesCoords = [] #has all the coordinates moves 
     manhattan = 0 #keeps track of total time, taken at the end
+
+    if len(open_columns) == 0:
+        #ship full
+        print("Ship at max capacity to load, cannot proceed further")
+        return
 
     while len(final_coordinates) > 0: #while our final coordinates is not empty...
         row,column = final_coordinates[0]
