@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import heapq
 from collections import defaultdict
+from datetime import date 
+from datetime import datetime
+import os
 
 # Code to read the manifest file into a dataframe
 '''df = pd.read_csv('ShipCase1.txt', sep=',', header=None, 
@@ -145,8 +148,44 @@ for i in range(len(table)):
         print(table[i][j], end=' ')
     print()'''
     
-table = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+'''table = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
 print(table)
 table = str(table)
 print(table)
-table = table.replace('[', '')
+table = table.replace('[', '')'''
+
+# code to swap manifest values
+'''df = pd.read_csv('ship_cases/ShipCase1.txt', sep=',', header=None, 
+                     names=['X', 'Y', 'Weight', 'Name'])
+
+df.iloc[0]['Name'], df.iloc[1]['Name'] = df.iloc[1]['Name'], df.iloc[0]['Name'] 
+#df.iloc[0], df.iloc[1] = df.iloc[1].copy(), df.iloc[0].copy()
+df.to_csv('ship_cases/ShipCase1.txt', header=None, index=False)'''
+
+# code to get the current date and time
+'''today = date.today()
+print("Today's date:", today)
+d2 = today.strftime("%B %d %Y")
+print("d2 =", d2)
+
+now = datetime.now()
+print("now =", now)
+dt_string = now.strftime("%B %d %Y: %H:%M")
+print("date and time =", dt_string)
+year = datetime.now().year
+print(year)
+
+date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+print(date_time)
+log_file_name = 'KoughLongBeach.txt'
+date_time = datetime.now().year
+log_file_name = log_file_name.replace('.txt', str(date_time) + '.txt')
+date_time = datetime.now().strftime("%B %d %Y: %H:%M")
+name ='C:\\Users\\Anthony\\OneDrive\\Desktop\\' + 'yeet.txt'
+log_file = open(name, 'a')
+log_file.write('OKAY' + '\n')'''
+username = os.getlogin()
+file_name = 'C:\\Users\\' + username + '\\OneDrive\\Desktop\\' + 'yeet.txt'
+file = open(file_name, 'a')
+file.write('YUH' + '\n')
+file.close()
