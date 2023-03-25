@@ -177,6 +177,48 @@ class Ship:
 
         return movesAndCoord
 
+    def load(self, coord: tuple[int,int], openColumn: int, minMoves: int) -> tuple[int,int,int]:
+        movesAndCoord = []
+        moves = 0
+        MaxMoves = minMoves
+
+        SHIPCOL = len(self.bay[0])
+        SHIPROW = len(self.bay)
+
+        row,col = coord #row = -1, col = -1 here
+        #row, col = (-1, -1)
+
+        for columns in range(0, SHIPCOL): #goes from 0, 1, 2, 3 ... , 11
+            moves = moves + 1
+            col = columns
+            if columns == openColumn:
+                break
+        
+        #we are now at our desired column, now we have to see how far down we can go down
+
+        #row is still -1, but our col is now in bounds
+
+        count = 0
+        for x in range(0,SHIPROW): #range of [0,8)
+            if self.bay[x][col].name == '   ':
+                count = count + 1
+            else: 
+                break
+
+        #print("count: ")
+        #print(count)
+
+        #count stores the amount of moves we have to go down
+        row = row + count
+        #print(row)
+        moves = moves + count
+
+        #i have moved as much down as I can, now I store my moves and coords
+        movesAndCoord.append(moves)
+        movesAndCoord.append((row,col))
+
+        return movesAndCoord
+
     def move_right(self, coord: tuple[int,int], openColumn: int, minMoves: int) -> tuple[int,int,int]:
         movesAndCoord = []
         moves = 0
