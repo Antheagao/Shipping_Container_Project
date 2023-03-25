@@ -4,6 +4,7 @@ from datetime import datetime
 import heapq
 import copy
 import time
+import os
 
 import pandas as pd
 import numpy as np
@@ -126,6 +127,7 @@ def main():
                 log_file.write(date_time + user_name + ' signs in\n')
         else:
             running = False
+            
     # Write the user signing out to the log file
     date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
     log_file.write(date_time + user_name + ' signs out\n')
@@ -365,6 +367,10 @@ def update_manifest(file_name: str, manifest: pd.DataFrame) -> None:
     file_name = file_name.replace('ship_cases/', 'ship_cases_outbound/')
     file_name = file_name.replace(".txt", "OUTBOUND.txt")
     manifest.to_csv(file_name, header=None, index=False)
+    os_name = os.getlogin()
+    desktop = 'C:\\Users\\' + os_name + '\\OneDrive\\Desktop\\' +\
+              file_name.replace('ship_cases_outbound/', '')
+    manifest.to_csv(desktop, header=None, index=False)
         
 
 ''' Function to parse the hashed table into a list of words '''

@@ -5,6 +5,7 @@ import heapq
 from collections import defaultdict
 from datetime import date 
 from datetime import datetime
+import os
 
 # Code to read the manifest file into a dataframe
 '''df = pd.read_csv('ShipCase1.txt', sep=',', header=None, 
@@ -175,9 +176,16 @@ year = datetime.now().year
 print(year)
 
 date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
-print(date_time)'''
+print(date_time)
 log_file_name = 'KoughLongBeach.txt'
 date_time = datetime.now().year
 log_file_name = log_file_name.replace('.txt', str(date_time) + '.txt')
 date_time = datetime.now().strftime("%B %d %Y: %H:%M")
-log_file = open(log_file_name, 'a')
+name ='C:\\Users\\Anthony\\OneDrive\\Desktop\\' + 'yeet.txt'
+log_file = open(name, 'a')
+log_file.write('OKAY' + '\n')'''
+username = os.getlogin()
+file_name = 'C:\\Users\\' + username + '\\OneDrive\\Desktop\\' + 'yeet.txt'
+file = open(file_name, 'a')
+file.write('YUH' + '\n')
+file.close()
