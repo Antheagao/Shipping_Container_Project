@@ -107,30 +107,29 @@ def print_table(ship : list[list[Container]], COLS : int) -> None:
             print('-', end='')
         print()
 
-def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
-    # get user input about which containers we are unloading
-
-    #empty array to collect containers we wish to unload
+def unloading(ship: Ship, df: pd.DataFrame, manifest: pd.DataFrame) -> None:
+    # Get user input about which containers we are unloading
+    # Empty array to collect containers we wish to unload
     unload_containers = [] 
-
-    #ask user to type container name, followed by enter to enter it
-    #if done with typing, simply click enter with an empty string
-
-    print('Enter the names of the containers you wish to unload\nIf done entering container labels, click \'ENTER\' without typing.')
+    
+    # Ask user to type container name, followed by enter to enter it
+    # If done with typing, simply click enter with an empty string
+    print('Enter the names of the containers you wish to unload\n'
+          'If done entering container labels, click \'ENTER\' without typing.')
 
     new_container = input("Enter container name: ")
     
-    #while loop to keep iterating until user clicks 'ENTER' by itself (empty string)
-
+    # While loop to keep iterating until user 
+    # clicks 'ENTER' by itself (empty string)
     while new_container != "":
-        #add container names to array of unload_containers
+        # Add container names to array of unload_containers
         unload_containers.append(new_container)
 
-        #ask user to enter another container
+        # Ask user to enter another container
         new_container = input("Enter container name: ")
     
-    #done collecting array of strings that container all containers we wish to unload
-
+    # Done collecting array of strings that container
+    # all containers we wish to unload
     seen_containers = set()
     uniq_containers = []
 
@@ -148,173 +147,185 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
         else:
             seen_containers2.add(x)
 
-    #collecting an array that consists of unique containers and duplicates.
-
-    #if dupes length == 0, then we have all unique containers, else we must get multiple container coordinates that must be unique
-
+    # Collecting an array that consists of unique containers and duplicates.
+    # If dupes length == 0, then we have all unique containers,
+    # else we must get multiple container coordinates that must be unique
     final_coordinates = []
     if len(dupes) == 0:
-        #all containers are unique, check to see if multiple names of the unique containers exists in manifest
-        
+        # All containers are unique, check to see if multiple names
+        # of the unique containers exists in manifest
         for i in uniq_containers:
             minList = []
             coordinates = []
             x, y = ship.get_coordinates(i)
-            coordinates.append((x,y))
+            coordinates.append((x, y))
             coordinates= ship.get_uniq_coordinates(i, coordinates)
             for val in coordinates:
                 row,column = val
                 stackedCrates = ship.get_stacked((row,column))
-                stackedCrates = stackedCrates + abs(row - -1) + abs(column - -1)
+                stackedCrates = stackedCrates +\
+                                abs(row - -1) + abs(column - -1)
                 minList.append(stackedCrates)
             finalXy = coordinates[minList.index(min(minList))]
             final_coordinates.append(finalXy)
-
         #print(final_coordinates)
-
-    else: #example, we want to unload "Cat", "Cat", "Dog". but 3 "Cats" exist
-        #not all containers are uniq, 
-
+    else: # Example, we want to unload "Cat", "Cat", "Dog". but 3 "Cats" exist
+        # Not all containers are uniq, 
         for i in uniq_containers:
             minList = []
             coordinates = []
             x, y = ship.get_coordinates(i)
-            coordinates.append((x,y))
+            coordinates.append((x, y))
             coordinates= ship.get_uniq_coordinates(i, coordinates)
             for val in coordinates:
-                row,column = val
-                stackedCrates = ship.get_stacked((row,column))
-                stackedCrates = stackedCrates + abs(row - -1) + abs(column - -1) #calculates distance from drop off to unloading container + takes into account amount of containers stacked on top of it
+                row, column = val
+                stackedCrates = ship.get_stacked((row, column))
+                # Calculates distance from drop off to unloading container 
+                # + takesinto account amount of containers stacked on top of it
+                stackedCrates = stackedCrates +\
+                                abs(row - -1) + abs(column - -1) 
                 minList.append(stackedCrates)
             finalXy = coordinates[minList.index(min(minList))]
             final_coordinates.append(finalXy)
 
             for j in dupes:
                 if j == i:
-                    minList.remove(min(minList)) #removes minimum value from minList
+                    # Removes minimum value from minList
+                    minList.remove(min(minList)) 
                     coordinates.remove(finalXy) 
                     finalXy = coordinates[minList.index(min(minList))]
                     final_coordinates.append(finalXy)
-    #collected all coordinates we need for unloading, did checks for dupes, and everything to get best coordinates available,
+    # Collected all coordinates we need for unloading, did checks for dupes,
+    # and everything to get best coordinates available,
     #print(final_coordinates)
 
     occupied_columns = []
     open_columns = []
 
-    for i,j in final_coordinates:
+    for i, j in final_coordinates:
         occupied_columns.append(j)
-
     open_columns = ship.get_open_columns(occupied_columns)
     #print(occupied_columns)
     #print(open_columns)
-
     orderOfMoves = []
     totalMoves = 0
     movesCoords = []
-    movesCoords.append((-1,-1))
+    movesCoords.append((-1, -1))
     manhattan = 0
 
-
-    while len(final_coordinates) > 0: #while our final coordinates is not empty...
-        #get a list of the amount of crates that are stacked on top, ideally, we want to start unloading the crate with the least amount of crates stacked on
+    # While our final coordinates is not empty...
+    while len(final_coordinates) > 0: 
+        # Get a list of the amount of crates that are stacked on top,
+        # ideally,we want to start unloading the crate with the least
+        # amount of crates stacked on
         finalStacked = []
         for i in final_coordinates:
             row,column = i
             stackedOnTop = ship.get_stacked((row,column))
             finalStacked.append(stackedOnTop)
 
-        #sort array in ascending order
-        finalStacked, final_coordinates = (list(t) for t in zip(*sorted(zip(finalStacked, final_coordinates)))) #sort the parallel lists in ascending order given the crates on top list as our key
-        
+        # Sort array in ascending order
+        # Sort the parallel lists in ascending order given
+        # the crates on top list as our key
+        finalStacked, final_coordinates = (list(t) for t in zip(
+                                *sorted(zip(finalStacked, final_coordinates)))) 
         print(final_coordinates)
         print(finalStacked)
 
-        while finalStacked[0] > 0: #takes first value of list of crates stacked to see if we are able to unload
-
-            #get the coordinate of the top-most container that we want to unload
+        # Takes first value of list of crates stacked to see
+        # if we are able to unload
+        while finalStacked[0] > 0: 
+            # Get the coordinate of the top-most 
+            # container that we want to unload
             row,column = final_coordinates[0]
-            row = row - finalStacked[0]    #ex (7,8) -> (5,8) for owl test case
+            row = row - finalStacked[0]  # Ex (7,8) -> (5,8) for owl test case
             LeftMinMoves = 10000
-            LeftminX,LeftminY= (-1,-1)
-
+            LeftminX, LeftminY= (-1,-1)
             RightMinMoves = 10000
             RightminX, RightminY = (-1,-1)
-            
 
             for openColLocation in open_columns:
-
-                #if openColLocation is less than our current col, we move left, up, and down
-                #else we move right, up, and down
-                #we need to check if we are able to move left, if not move up,
-                #if we move up and are out of bounds aka in -1, then we move to openCol and keep going down until we cant go further down
-                #we should save two values, names currMoves and currCords, as well with minMoves and minCords
-
-                if openColLocation < column: #Line 229 column value
+                # If openColLocation is less than our current col,
+                # we move left, up, and down
+                # Else we move right, up, and down
+                # Ee need to check if we are able to move left, if not move up,
+                
+                # If we move up and are out of bounds aka in -1,
+                # then we move to openCol and keep going down until
+                # we cant go further down
+                
+                # We should save two values, names currMoves and currCords,
+                # as well with minMoves and minCords
+                if openColLocation < column: # Line 229 column value
                     #print(open_columns)
-                    currMoves, currCords = ship.move_left((row,column),openColLocation, LeftMinMoves)
+                    currMoves, currCords = ship.move_left((row, column),
+                                                          openColLocation,
+                                                          LeftMinMoves)
                     #print(currMoves)
                     #print(currCords)
                     if currMoves < LeftMinMoves:
                         LeftMinMoves = currMoves
                         LeftminX,LeftminY = currCords
-
-                else: #cases for when we move right and up
-                    currMoves, currCords = ship.move_right((row,column), openColLocation, RightMinMoves)
+                else: # Cases for when we move right and up
+                    currMoves, currCords = ship.move_right((row, column),
+                                                            openColLocation,
+                                                            RightMinMoves)
                     if currMoves < RightMinMoves:
                         RightMinMoves = currMoves
                         RightminX,RightminY = currCords
 
-            #at the end
+            # At the end
             finalStacked[0] = finalStacked[0] - 1
             if LeftMinMoves < RightMinMoves:
                 smolCoordX, smolCoordY = LeftminX,LeftminY
-                move = "Move " + str((row,column)) + " to " + str((LeftminX,LeftminY))
-                movesCoords.append((row,column))
-                movesCoords.append((LeftminX,LeftminY))
+                move = "Move " + str((row, column)) + " to " +\
+                        str((LeftminX, LeftminY))
+                movesCoords.append((row, column))
+                movesCoords.append((LeftminX, LeftminY))
                 totalMoves = totalMoves + LeftMinMoves
                 orderOfMoves.append(move)
-
-
             else:
                 smolCoordX, smolCoordY = RightminX,RightminY
-                move = "Move " + str((row,column)) + " to " + str((RightminX,RightminY))
-                movesCoords.append((row,column))
-                movesCoords.append((RightminX,RightminY))
+                move = "Move " + str((row, column)) + " to " +\
+                        str((RightminX, RightminY))
+                movesCoords.append((row, column))
+                movesCoords.append((RightminX, RightminY))
                 totalMoves = totalMoves + RightMinMoves
                 orderOfMoves.append(move)
 
-            #switch containers here
-            ship.bay[row][column], ship.bay[smolCoordX][smolCoordY] = ship.bay[smolCoordX][smolCoordY], ship.bay[row][column]
-            #do manifest manip HERE !!!!
+            # Switch containers here
+            ship.bay[row][column], ship.bay[smolCoordX][smolCoordY] =\
+            ship.bay[smolCoordX][smolCoordY], ship.bay[row][column]
+            # Do manifest manip HERE !!!!
 
-        row,column = final_coordinates[0]
+        row, column = final_coordinates[0]
         totalMoves = totalMoves + abs(row - -1) + abs(column - -1)
         move = "Move " + str(final_coordinates[0]) + " to (-1, -1)" 
         movesCoords.append(final_coordinates[0])
-        movesCoords.append((-1,-1))
+        movesCoords.append((-1, -1))
         orderOfMoves.append(move)
 
-        #remove container from table
+        # Remove container from table
         ship.bay[row][column].name = '   '
-        ship.bay[row][column].weight = 0            #do manifest manip HERE !!!!
+        ship.bay[row][column].weight = 0     # Do manifest manip HERE !!!!
 
-        #add total moves values from pink star to pick up truck here
+        # Add total moves values from pink star to pick up truck here
         manhattan = manhattan + 2
 
-        #remove column element from occupied list
+        # Remove column element from occupied list
         occupied_columns.remove(column)
 
-        #get open columns again here
+        # Get open columns again here
         open_columns = ship.get_open_columns(occupied_columns)
 
-        
         #print_table(ship.bay, 12)
         final_coordinates.pop(0)
         finalStacked.pop(0)
 
     #print(orderOfMoves)
 
-    #orderOfMoves stores a string of moves from container to container, when switching containers, we must manipulate manifest
+    # orderOfMoves stores a string of moves from container to container,
+    # when switching containers, we must manipulate manifest
     
     for index, elem in enumerate(movesCoords):
         if (index<(len(movesCoords)-1)):
@@ -323,98 +334,99 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
             manhattan = abs(currX - nextX) + abs(currY - nextY) + manhattan
         else:
             manhattan = manhattan
-
-    #print(manhattan)
-
-        
+    #print(manhattan)  
     return 
 
 
     
 def loading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
-
-    #enter the label of the container along with the weight you want to give it
+    # Enter the label of the container along with
+    # the weight you want to give it
     load_containers = []
     load_weight = []
     final_coordinates = []
 
-    print('Enter the label of the container you wish to load\n Press \'ENTER\' and then type the weight, click \'ENTER\' when done')
-    print('If no more containers to load, press \'ENTER\' without typing anything when asked for label of container')
+    print('Enter the label of the container you wish to load\n'
+          'Press \'ENTER\' and then type the weight,'
+          'click \'ENTER\' when done')
+    print('If no more containers to load, press \'ENTER\''
+          'without typing anything when asked for label of container')
+    
     new_container = input("Enter container label: ")
-    while new_container != '': #empty string
+    while new_container != '': # Empty string
         weightString = "Enter " + new_container + "\'s weight: "
         new_container_weight = input(weightString)
         load_containers.append(new_container)
         load_weight.append(new_container_weight)
-        final_coordinates.append((-1,-1)) #adds to the list each time as this is our starting point each time
+        final_coordinates.append((-1,-1)) # Adds to the list each time as this
+                                          # is our starting point each time
         new_container = input("Enter container name: ")
-
     print(load_containers)
     print(load_weight)
 
-    #similar to unloading minMoves, except we keep track of moves per container
-    #find all open columns where we can move
-    #calc manhattan distance from 
-    #should do a while loop that goes through all load_containers list, and after we load, we pop, only when we have an empty list do we stop loading process
-
+    # Similar to unloading minMoves, 
+    # except we keep track of moves per container
+    # Find all open columns where we can move
+    # Calc manhattan distance from 
+    # Should do a while loop that goes through all load_containers list,
+    # and after we load, we pop, only when we have an empty list 
+    # do we stop loading process
     occupied_columns = []
     open_columns = []
 
-    #get a list of columns that have open slots to load my containers
+    # Get a list of columns that have open slots to load my containers
     open_columns = ship.get_open_columns(occupied_columns) 
+    orderOfMoves = [] # List of strings that state each operation that
+                      # crane operator has to do, ex : Move (-1,-1) to (4,0)
+    movesCoords = []  # Has all the coordinates moves 
+    manhattan = 0  # Keeps track of total time, taken at the end
 
-    orderOfMoves = [] #list of strings that state each operation that crane operator has to do, ex : Move (-1,-1) to (4,0)
-    movesCoords = [] #has all the coordinates moves 
-    manhattan = 0 #keeps track of total time, taken at the end
-
-    while len(final_coordinates) > 0: #while our final coordinates is not empty...
+    # While our final coordinates is not empty...
+    while len(final_coordinates) > 0: 
         row,column = final_coordinates[0]
         MinMoves = 10000
         minX,minY= (-1,-1)
-
         for openColLocation in open_columns:
-            currMoves, currCords = ship.load((row,column),openColLocation, MinMoves)
-
+            currMoves, currCords = ship.load((row, column),
+                                             openColLocation,
+                                             MinMoves)
             if currMoves < MinMoves:
-                        MinMoves = currMoves
-                        minX,minY = currCords
-
-            
-        move = "Move " + str((row,column)) + " to " + str((minX,minY))
-
-        movesCoords.append((row,column))
-        movesCoords.append((minX,minY))
+                MinMoves = currMoves
+                minX,minY = currCords
+        move = "Move " + str((row, column)) + " to " + str((minX,minY))
+        movesCoords.append((row, column))
+        movesCoords.append((minX, minY))
         orderOfMoves.append(move)
 
-        #add container to table
+        # Add container to table
         ship.bay[minX][minY].name = load_containers[0]
-        ship.bay[minX][minY].weight = load_weight[0]          #do manifest manip HERE !!!!
+        
+        # Do manifest manip HERE!!!!
+        ship.bay[minX][minY].weight = load_weight[0]
 
-        #add total moves values from pink star to pick up truck here
+        # Add total moves values from pink star to pick up truck here
         manhattan = manhattan + 2
 
         #get open columns again here
         open_columns = ship.get_open_columns(occupied_columns)
-
-        
         print_table(ship.bay, 12)
         final_coordinates.pop(0)
         load_containers.pop(0)
         load_weight.pop(0)
 
-    #orderOfMoves stores a string of moves from container to container, when switching containers, we must manipulate manifest
+    # orderOfMoves stores a string of moves from container to container,
+    # when switching containers, we must manipulate manifest
     #print(orderOfMoves)
     #print(movesCoords)
     for index, elem in enumerate(movesCoords):
-        if (index<(len(movesCoords)-1)):
+        if (index<(len(movesCoords) - 1)):
             currX,currY = elem
-            nextX,nextY = movesCoords[index+1]
+            nextX,nextY = movesCoords[index + 1]
             manhattan = abs(currX - nextX) + abs(currY - nextY) + manhattan
         else:
             manhattan = manhattan
 
     #print(manhattan)
-
     return
 
     
