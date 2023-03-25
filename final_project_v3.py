@@ -525,7 +525,7 @@ def loading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     print('Enter the label of the container you wish to load\n'
           'Press \'ENTER\' and then type the weight,'
           'click \'ENTER\' when done')
-    print('If no more containers to load, press \'ENTER\''
+    print('If no more containers to load or not loading, press \'ENTER\''
           'without typing anything when asked for label of container')
     
     new_container = input("Enter container label: ")
@@ -537,8 +537,12 @@ def loading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
         final_coordinates.append((-1,-1)) # Adds to the list each time as this
                                           # is our starting point each time
         new_container = input("Enter container name: ")
-    print(load_containers)
-    print(load_weight)
+    #print(load_containers)
+    #print(load_weight)
+
+    if load_containers == 0:
+        #no containers loading so we only unloaded
+        return
 
     # Similar to unloading minMoves, 
     # except we keep track of moves per container
@@ -556,6 +560,12 @@ def loading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
                       # crane operator has to do, ex : Move (-1,-1) to (4,0)
     movesCoords = []  # Has all the coordinates moves 
     manhattan = 0  # Keeps track of total time, taken at the end
+
+    if len(open_columns) == 0:
+        #ship full
+        print("Ship at max capacity to load, cannot proceed further")
+        print("Add a comment about this")
+        return
 
     # While our final coordinates is not empty...
     while len(final_coordinates) > 0: 
@@ -585,7 +595,7 @@ def loading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
 
         #get open columns again here
         open_columns = ship.get_open_columns(occupied_columns)
-        print_table(ship.bay, 12)
+        #print_table(ship.bay, 12)
         final_coordinates.pop(0)
         load_containers.pop(0)
         load_weight.pop(0)
@@ -615,7 +625,7 @@ def unloading(ship: Ship, df: pd.DataFrame, manifest: pd.DataFrame) -> None:
     # Ask user to type container name, followed by enter to enter it
     # If done with typing, simply click enter with an empty string
     print('Enter the names of the containers you wish to unload\n'
-          'If done entering container labels, click \'ENTER\' without typing.')
+          'If done entering container labels or not unloading, click \'ENTER\' without typing.')
 
     new_container = input("Enter container name: ")
     
@@ -629,6 +639,15 @@ def unloading(ship: Ship, df: pd.DataFrame, manifest: pd.DataFrame) -> None:
         new_container = input("Enter container name: ")
     
     # Done collecting array of strings that container
+
+    if len(unload_containers) == 0: #no containers inputted:
+        return
+
+    totalContainersOnShip = ship.get_container_count()
+    if totalContainersOnShip == 0:
+        print("Cannot unload any container since our ship is empty")
+        print("Add comment to log about this.")
+        return    
     # all containers we wish to unload
     seen_containers = set()
     uniq_containers = []
@@ -729,8 +748,8 @@ def unloading(ship: Ship, df: pd.DataFrame, manifest: pd.DataFrame) -> None:
         # the crates on top list as our key
         finalStacked, final_coordinates = (list(t) for t in zip(
                                 *sorted(zip(finalStacked, final_coordinates)))) 
-        print(final_coordinates)
-        print(finalStacked)
+        #print(final_coordinates)
+        #print(finalStacked)
 
         # Takes first value of list of crates stacked to see
         # if we are able to unload
