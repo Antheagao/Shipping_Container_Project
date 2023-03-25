@@ -475,11 +475,13 @@ def balancing(ship: Ship, operations: list[Operation],
         ship.bay[x2][y2].name = '   '
         print()
         
-        choice = input('Enter (1) to confirm the move '
-                       'or (2) to switch user: ')
-        while choice != '1' and choice != '2':
-            choice = input('Enter (1) to confirm the move '
-                           'or (2) to switch user: ')
+        choice = input('Enter (1) to confirm the move, '
+                       '(2) to switch user, or (3) to write an issue'
+                       ' to the log file: ')
+        while choice != '1' and choice != '2' and choice != '3':
+            choice = input('Enter (1) to confirm the move, '
+                       '(2) to switch user, or (3) to write an issue'
+                       ' to the log file: ')
         if choice == '2':
             date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
             log_file.write(date_time + user_name + ' signs out\n')
@@ -489,6 +491,10 @@ def balancing(ship: Ship, operations: list[Operation],
             choice = input('Enter (1) to confirm the previous move: ')
             while choice != '1':
                 choice = input('Enter (1) to confirm the previous move: ')
+        elif choice == '3':
+            date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+            message = input('Enter the issue: ')
+            log_file.write(date_time + message + '\n')
         
         # Swap the containers in the ship bay and update the manifest
         ship.bay[x1][y1], ship.bay[x2][y2] = ship.bay[x2][y2], ship.bay[x1][y1]

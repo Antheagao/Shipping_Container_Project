@@ -49,3 +49,10 @@ March 24 2023: 18:21 farah signs in
 March 24 2023: 18:21 Manifest ShipCase1.txt is opened, there are 2 containers on the ship
 March 24 2023: 18:21 Finished a Cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
 March 24 2023: 18:21 farah signs out
+March 24 2023: 18:44 Anthony signs in
+March 24 2023: 18:44 Manifest ShipCase1.txt is opened, there are 2 containers on the ship
+March 24 2023: 18:44 this container smells funny, and i dont like the way its looking at me
+March 24 2023: 18:45 Anthony signs out
+March 24 2023: 18:45 allah  signs in
+March 24 2023: 18:45 Finished a Cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
+March 24 2023: 18:45 allah  signs out
