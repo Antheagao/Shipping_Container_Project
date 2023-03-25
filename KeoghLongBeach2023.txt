@@ -1,4 +1,8 @@
 
-March 24 2023: 22:11 Manifest ShipCase1.txt is opened, there are 2 containers on the ship
-March 24 2023: 22:12 Finished a Cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
-March 24 2023: 22:14 Anthony signs out
+March 25 2023: 01:31 Anthony Mendez signs in
+March 25 2023: 01:31 Manifest ShipCase4.txt is opened, there are 7 containers on the ship
+March 25 2023: 01:33 Anthony Mendez signs out
+March 25 2023: 01:33 jah jah signs in
+March 25 2023: 01:33 the container is the wrong weight
+March 25 2023: 01:34 Finished a Cycle. Manifest ShipCase4OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
+March 25 2023: 01:34 jah jah signs out
