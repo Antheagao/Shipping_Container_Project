@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from objects2 import Container, Ship
+from objects_3 import Container, Ship
 from collections import defaultdict
 from collections import deque
 import heapq
@@ -132,8 +132,12 @@ def unloading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     #done collecting array of strings that container all containers we wish to unload
     if len(unload_containers) == 0: #no containers inputted:
         return
-    
 
+    totalContainersOnShip = ship.get_container_count()
+    if totalContainersOnShip == 0:
+        print("Cannot unload any container since our ship is empty")
+        print("Add comment to log about this.")
+        return
 
     seen_containers = set()
     uniq_containers = []
@@ -378,6 +382,7 @@ def loading(ship: Ship, df : pd.DataFrame, manifest : pd.DataFrame) -> None:
     if len(open_columns) == 0:
         #ship full
         print("Ship at max capacity to load, cannot proceed further")
+        print("Add a comment about this")
         return
 
     while len(final_coordinates) > 0: #while our final coordinates is not empty...
