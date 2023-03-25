@@ -100,8 +100,8 @@ def main():
         # Create the updated manifest file and send it to the ship captain
         update_manifest(file_name, manifest)
         file_name = file_name.replace(".txt", "OUTBOUND.txt")
-        print('\n\nFinished a job cycle,', file_name,
-              'was written to desktop.\n'
+        print('\n\nFinished a job cycle,',
+              file_name.replace("ship_cases/", ""), 'was written to desktop.\n'
               'Send the updated manifest to the ship captain.\n')
         confirm = str(input('Enter (c) to confirm the message was read: '))
         while confirm != 'c':
@@ -497,7 +497,7 @@ def balancing(ship: Ship, operations: list[Operation],
         manifest.iloc[index1]['Weight'], manifest.iloc[index2]['Weight'] =\
             manifest.iloc[index2]['Weight'], manifest.iloc[index1]['Weight']
         print()
-    print('<' * 23,'Fininshed balancing the ship', '>' * 23, '\n')
+    print('<' * 21,'Fininshed balancing the ship', '>' * 21, '\n')
     display_ship_status(ship, ship_name, user_name)
     return user_name
 

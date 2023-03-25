@@ -30,3 +30,22 @@ March 24 2023: 18:09 jah signs in
 March 24 2023: 18:09 Manifest ShipCase1.txt is opened, there are 2 containers on the ship
 March 24 2023: 18:10 Finished a Cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
 March 24 2023: 18:10 jah signs out
+March 24 2023: 18:15 anthony signs in
+March 24 2023: 18:15 anthony  signs in
+March 24 2023: 18:15 Manifest ShipCase1.txt is opened, there are 2 containers on the ship
+March 24 2023: 18:15 anthony  signs out
+March 24 2023: 18:16 Jahseh signs in
+March 24 2023: 18:16 Finished a Cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
+March 24 2023: 18:16 Jahseh signs out
+March 24 2023: 18:16 Allaaggjabi signs in
+March 24 2023: 18:16 Manifest ShipCase2.txt is opened, there are 4 containers on the ship
+March 24 2023: 18:17 Finished a Cycle. Manifest ShipCase2OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
+March 24 2023: 18:17 Allaaggjabi signs out
+March 24 2023: 18:19 slime signs in
+March 24 2023: 18:19 Manifest ShipCase1.txt is opened, there are 2 containers on the ship
+March 24 2023: 18:19 Finished a Cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
+March 24 2023: 18:20 slime signs out
+March 24 2023: 18:21 farah signs in
+March 24 2023: 18:21 Manifest ShipCase1.txt is opened, there are 2 containers on the ship
+March 24 2023: 18:21 Finished a Cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
+March 24 2023: 18:21 farah signs out
