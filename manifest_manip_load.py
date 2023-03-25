@@ -98,7 +98,7 @@ def main():
                                   ship_name, log_file)
         else:
             unloading(ship, manifest, log_file)
-            #loading(ship,manifest,log_file)
+            loading(ship,manifest,log_file)
         
         # Create the updated manifest file and send it to the ship captain
         update_manifest(file_name, manifest)
@@ -524,7 +524,7 @@ def loading(ship: Ship,  manifest : pd.DataFrame, log_file: str) -> None:
     load_weight2 = []
     final_coordinates = []
 
-    print('Enter the label of the container you wish to load\n'
+    print('\n\nEnter the label of the container you wish to load\n'
           'Press \'ENTER\' and then type the weight,'
           'click \'ENTER\' when done')
     print('If no more containers to load or not loading, press \'ENTER\''
@@ -717,7 +717,7 @@ def unloading(ship: Ship, manifest: pd.DataFrame, log_file: str) -> None:
     
     # Ask user to type container name, followed by enter to enter it
     # If done with typing, simply click enter with an empty string
-    print('Enter the names of the containers you wish to unload\n'
+    print('\n\nEnter the names of the containers you wish to unload\n'
           'If done entering container labels or not unloading, click \'ENTER\' without typing.')
 
     new_container = input("Enter container name: ")
@@ -960,6 +960,128 @@ def unloading(ship: Ship, manifest: pd.DataFrame, log_file: str) -> None:
     #print(movesCoords)
 
     #manifest manipulation here
+    outputString = "\n\nCompleted loading operations.\n\nEstimated Time of completion for moving steps: " + str(manhattan) + " minutes.\n\n"
+    print(outputString)
+
+    print("Beginning to print the order of moves to UNLOAD the container(s).\n" )
+
+    while len(movesCoords) > 0: #while movesCoords is not empty
+        fromX,fromY = movesCoords[0]
+        movesCoords.pop(0)
+        toX,toY = movesCoords[0]
+        movesCoords.pop(0)
+
+        manifest_indexFROM = (8 - 1 - fromX) * 12 + fromY
+
+        containerNameFrom = manifest.iloc[manifest_indexFROM]['Name']
+        containerWeightFrom = manifest.iloc[manifest_indexFROM]['Weight']
+
+        if toX == -1 and toY == -1: #we grabbed coordinates (-1,-1) ; meaning that we are dropping this container home!
+            #do stuff
+            nameString = " UNUSED"
+            weightString = " {00000}"
+
+            #get respective coordinates 
+            stringCoordinatesXFrom = manifest.iloc[manifest_indexFROM]['X']
+            stringCoordinatesYFrom = manifest.iloc[manifest_indexFROM]['Y']
+
+            #change manifest_index location to contain our container name and container weight
+            manifest.iloc[manifest_indexFROM]['Name'] = nameString
+            manifest.iloc[manifest_indexFROM]['Weight'] = weightString
+
+            stepString = "Move container \"" + containerNameFrom + "\" from location [" + stringCoordinatesXFrom + ", " + stringCoordinatesYFrom + "] to cargo truck"
+
+            print(stepString)
+            print_table(bays[0],12)
+            bays.pop(0)
+
+            #get user input here to see if we continue or if we add a comment
+            choice = input('Enter (1) to confirm the move, '
+                        '(2) to switch user, or (3) to write an issue'
+                        ' to the log file: ')
+            while choice != '1' and choice != '2' and choice != '3':
+                choice = input('Enter (1) to confirm the move, '
+                        '(2) to switch user, or (3) to write an issue'
+                        ' to the log file: ')
+            if choice == '1':
+                date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+                log_file.write(date_time + '\"' + containerNameFrom + ' \" is offloaded.\n' )
+            
+            elif choice == '2':
+                date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+                log_file.write(date_time + user_name + ' signs out\n')
+                user_name = input('Enter your name to sign in: ')
+                date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+                log_file.write(date_time + user_name + ' signs in\n')
+                choice = input('Enter (1) to confirm the previous move: ')
+                while choice != '1':
+                    choice = input('Enter (1) to confirm the previous move: ')
+            elif choice == '3':
+                date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+                message = input('Enter the issue: ')
+                log_file.write(date_time + message + '\n')
+                choice = input('Enter (1) to confirm the previous move: ')
+                if choice != '1':
+                    while choice != '1':
+                        choice = input('Enter (1) to confirm the previous move: ')
+                else:
+                    date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+                    log_file.write(date_time + '\"' + containerNameFrom + ' \" is offloaded.\n' )
+        
+
+
+
+        else: 
+            manifest_indexTO = (8 - 1 - toX) * 12 + toY
+
+            #get the respective coordinates 
+            stringCoordinatesXFrom = manifest.iloc[manifest_indexFROM]['X']
+            stringCoordinatesYFrom = manifest.iloc[manifest_indexFROM]['Y']
+
+            stringCoordinatesXTo = manifest.iloc[manifest_indexTO]['X']
+            stringCoordinatesYTo = manifest.iloc[manifest_indexTO]['Y']
+            
+
+            #change manifest_index location to contain our container name and container weight
+            manifest.iloc[manifest_indexFROM]['Name'] = manifest.iloc[manifest_indexTO]['Name']
+            manifest.iloc[manifest_indexFROM]['Weight'] = manifest.iloc[manifest_indexTO]['Weight']
+
+            manifest.iloc[manifest_indexTO]['Name'] = containerNameFrom
+            manifest.iloc[manifest_indexTO]['Weight'] = containerWeightFrom
+
+            stepString = "Move container \"" + containerNameFrom + "\" from location [" + stringCoordinatesXFrom + ", " + stringCoordinatesYFrom + "] to location [" + stringCoordinatesXTo + ", " + stringCoordinatesYTo + "]"
+
+            print(stepString)
+            print_table(bays[0],12)
+            bays.pop(0)
+
+
+            #get user input here to see if we continue or if we add a comment
+            choice = input('Enter (1) to confirm the move, '
+                        '(2) to switch user, or (3) to write an issue'
+                        ' to the log file: ')
+            while choice != '1' and choice != '2' and choice != '3':
+                choice = input('Enter (1) to confirm the move, '
+                        '(2) to switch user, or (3) to write an issue'
+                        ' to the log file: ')
+            
+            if choice == '2':
+                date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+                log_file.write(date_time + user_name + ' signs out\n')
+                user_name = input('Enter your name to sign in: ')
+                date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+                log_file.write(date_time + user_name + ' signs in\n')
+                choice = input('Enter (1) to confirm the previous move: ')
+                while choice != '1':
+                    choice = input('Enter (1) to confirm the previous move: ')
+            elif choice == '3':
+                date_time = datetime.now().strftime("%B %d %Y: %H:%M ")
+                message = input('Enter the issue: ')
+                log_file.write(date_time + message + '\n')
+                choice = input('Enter (1) to confirm the previous move: ')
+                if choice != '1':
+                    while choice != '1':
+                        choice = input('Enter (1) to confirm the previous move: ')
 
 
 
