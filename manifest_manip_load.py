@@ -471,7 +471,6 @@ def balancing(ship: Ship, operations: list[Operation],
         index1, index2 = operations[index].index, operations[index + 1].index
         print('=' * 22,
               operations[index].move, operations[index].position, '',
-              operations[index].name + ',',
               operations[index + 1].move, operations[index + 1].position,
               '=' * 22)
         ship.bay[x2][y2].name = ' X '
