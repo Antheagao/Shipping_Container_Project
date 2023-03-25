@@ -97,8 +97,8 @@ def main():
                                   manifest, user_name,
                                   ship_name, log_file)
         else:
-            begin_unload = None
-            loading(ship,manifest,log_file)
+            unloading(ship, manifest, log_file)
+            #loading(ship,manifest,log_file)
         
         # Create the updated manifest file and send it to the ship captain
         update_manifest(file_name, manifest)
@@ -713,6 +713,7 @@ def unloading(ship: Ship, manifest: pd.DataFrame, log_file: str) -> None:
     # Get user input about which containers we are unloading
     # Empty array to collect containers we wish to unload
     unload_containers = [] 
+    bays = []
     
     # Ask user to type container name, followed by enter to enter it
     # If done with typing, simply click enter with an empty string
@@ -909,6 +910,8 @@ def unloading(ship: Ship, manifest: pd.DataFrame, log_file: str) -> None:
             ship.bay[row][column], ship.bay[smolCoordX][smolCoordY] =\
             ship.bay[smolCoordX][smolCoordY], ship.bay[row][column]
             # Do manifest manip HERE !!!!
+            bay = copy.deepcopy(ship.bay)
+            bays.append(bay)
 
         row, column = final_coordinates[0]
         totalMoves = totalMoves + abs(row - -1) + abs(column - -1)
@@ -920,6 +923,10 @@ def unloading(ship: Ship, manifest: pd.DataFrame, log_file: str) -> None:
         # Remove container from table
         ship.bay[row][column].name = '   '
         ship.bay[row][column].weight = 0     # Do manifest manip HERE !!!!
+
+        bay = copy.deepcopy(ship.bay)
+        bays.append(bay)
+
 
         # Add total moves values from pink star to pick up truck here
         manhattan = manhattan + 2
@@ -947,6 +954,15 @@ def unloading(ship: Ship, manifest: pd.DataFrame, log_file: str) -> None:
         else:
             manhattan = manhattan
     #print(manhattan)  
+    movesCoords.pop(0)
+
+    #removed the initial -1,-1 in movesCoords that was used to calculate the manhattan distance
+    #print(movesCoords)
+
+    #manifest manipulation here
+
+
+
     return
 
 
