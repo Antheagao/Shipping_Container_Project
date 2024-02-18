@@ -14,4 +14,4 @@ The program is meant to be used for shipping container movements at shipping doc
 * **ASCII text-art to illustrate the ship's dock, and illustrate each shipping container movement**
 * **option to add comments to the log file, which is keeping track of user's actions (to be sent to management of whomever wishes to use the program)**
 * **ability to balance the weight of the ship, following Maritime Law, in the quickest time**
-* **ability to offload a specific shipping container, given the container's label, in the fastest time possible**
+* **ability to offload a specific shipping container, given the container's label, using optimal order of operations**
