@@ -1,7 +1,7 @@
 # Project Overview
 This project is a collaboration between users: @Antheagao and @danmrt. This project was created for our ***Project in CS: Artificial Intelligent Systems***. 
 
-Our project entails a program, ran on an IDE, that provides the optimal order of operations to *onload*/*offload* and *balance* shipping containers on a ship. 
+Our project entails a program, ran on an IDE, that provides the optimal order of operations to *load*/*unload* and *balance* shipping containers on a ship. 
 
 The program takes a manifest file as input, which is set to a specific format that contains the *(X,Y) coordinates*, *weight (kg)*, and *container label*/*status*. 
 
@@ -12,7 +12,7 @@ The program is meant to be used for shipping container movements at shipping doc
 * **ASCII text-art to illustrate the ship's dock, and illustrate which coordinate the container should be moved to**
 * **option to add comments to the log file, which is keeping track of user's actions (to be sent to management of whomever wishes to use the program)**
 * **ability to balance the weight of the ship, following Maritime Law, in a reasonable and optimal amount of time**
-* **ability to offload a specific shipping container, given the container's label, using an optimal order of operations**
+* **ability to unload a specific shipping container, given the container's label, using an optimal order of operations**
 
 # Inputs
 The program takes user inputs such as **ASCII text-inputs**, **user-typed comments**, and **a manifest file** (shown in the format seen below). 
@@ -21,12 +21,12 @@ The program takes user inputs such as **ASCII text-inputs**, **user-typed commen
 
 The image above describes how the manifest file format looks, this is the input taken by the program. The grid is a visual represenation of the manifest's contents .
 
-# Offloading
-The program handles **offloading** by prompting the user to type the names of the containers to *offload*. The program will then optimize the typed names, and select an optimal order to *offload* the containers.
+# Unloading
+The program handles **unloading** by prompting the user to type the names of the containers to *unload*. The program will then optimize the typed names, and select an optimal order to *unload* the containers.
 
-We have an example of the ***Offloading*** feature below:
+We have an example of the ***unloading*** feature below:
 
-## Offloading : Example
+## Unloading : Example
 
 Upon compilation of the program, it will ask for *user sign-in*, and then request the manifest .txt file
 
@@ -34,7 +34,7 @@ Once entered, the program (in ASCII text art) visualizes the manifest .txt file 
 
 ![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/9efa5ea7-5945-447d-b488-900204a96bb7)
 
-The ASCII text art illustrates the empty possible coordinates on the ship where containers can be onloaded, and illustrates the spots where NO CONTAINER can be placed (visualized as +++).
+The ASCII text art illustrates the empty possible coordinates on the ship where containers can be loaded, and illustrates the spots where NO CONTAINER can be placed (visualized as +++).
 
 The program will ask for user-input to choose either the *Balancing* or the *Unload/load* option. We will choose the second option here.
 
@@ -56,12 +56,12 @@ The program has finished its process, and tells the user that a new 'OUTBOUND.tx
 
 The program asks whether the user will use the program on another ship. 
 
-# Onloading
-The program handles **onloading** by calculating an optimal path to onload the shipping container requested from the shipping dock to the nearest available ship coordinate.
+# Loading
+The program handles **loading** by calculating an optimal path to load the shipping container requested from the shipping dock to the nearest available ship coordinate.
 
-We have an example of the ***Onloading*** feature below:
+We have an example of the ***Loading*** feature below:
 
-## Onloading : Example
+## Loading : Example
 
 Upon compilation of the program, it will ask for *user sign-in*, and then request the manifest .txt file
 
@@ -69,7 +69,7 @@ Once entered, the program (in ASCII text art) visualizes the manifest .txt file 
 
 ![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/271d131c-3113-4e82-b3aa-32e84acfa7f1)
 
-The ASCII text art illustrates the empty possible coordinates on the ship where containers can be onloaded, and illustrates the spots where NO CONTAINER can be placed (visualized as +++).
+The ASCII text art illustrates the empty possible coordinates on the ship where containers can be loaded, and illustrates the spots where NO CONTAINER can be placed (visualized as +++).
 
 The program will ask for user-input to choose either the *Balancing* or the *Unload/load* option. We will choose the second option here.
 
