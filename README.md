@@ -28,7 +28,33 @@ We have an example of the ***Offloading*** feature below:
 
 ## Offloading : Example
 
+Upon compilation of the program, it will ask for *user sign-in*, and then request the manifest .txt file
 
+Once entered, the program (in ASCII text art) visualizes the manifest .txt file into a visual representation of the ship's containers on-board.
+
+![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/9efa5ea7-5945-447d-b488-900204a96bb7)
+
+The ASCII text art illustrates the empty possible coordinates on the ship where containers can be onloaded, and illustrates the spots where NO CONTAINER can be placed (visualized as +++).
+
+The program will ask for user-input to choose either the *Balancing* or the *Unload/load* option. We will choose the second option here.
+
+![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/274db0d7-c5ee-4945-9a9c-292fded26aed)
+
+We type into the console the 'labels' we choose to *unload*. We keep 'ENTERING' names of the labels until we choose to be done. 
+
+The program will give an estimated amount of time it will take to complete the whole *unloading* process.
+
+The program then specifies which coordiantes the containers must be placed to achieve the estimated time of completion. (It will ask for user-input each step of the process)
+
+![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/6fe0ae76-646b-43f9-8b3c-088191539c48)
+
+![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/55135b2b-0f9d-4198-ba12-de66861bb473)
+
+Once all containers have been *unloaded*, the program asks the user whether any *loading* will be done, since no *loading* is needed, we 'ENTER'.
+
+The program has finished its process, and tells the user that a new 'OUTBOUND.txt' file has been written to desktop. (Asks user to send the new outbound to Captain)
+
+The program asks whether the user will use the program on another ship. 
 
 # Onloading
 The program handles **onloading** by calculating an optimal path to onload the shipping container requested from the shipping dock to the nearest available ship coordinate.
