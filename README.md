@@ -91,6 +91,30 @@ The program asks for the user to send the *newly created manifest file* to admin
 
 The program will continue to display **ASCII text art** to illustrate where the specific container should be placed, and ask the user whether they want to work on a *different ship*.
 
+# Log File
+
+At any moment in the program, the user can add multiple comments during the different functions, that is written to a *log file*, stored by the program, that cannot be opened by the user.
+
+The purpose of the *log file* is to timestamp every container movement and potential complications in certain containers should the problem arise.
+
+The user is only able to add *comments* to the *log file*, during the movements of containers. For example, if a container is broken, the user can add a comment to be saved to the *log file*.
+
+## Log File : Example
+
+![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/684464ce-3960-4683-be8f-4e98d63dad04)
+
+The program is unloading the scenario above, the user notices the delivery truck is late, so the user types a comment. 
+
+The comment is saved into the *log file*, a text file stored by the program, only accessible by the admin.
+
+![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/79696a42-f5ed-4b9f-84e0-265d3c07cc3a)
+
+For the example used above, our *log file* is located at the location listed. There are timestamps for user activity such as sign in, sign out, comments, and the different functions of the program.
+
+
+
+
+
 
 
 
