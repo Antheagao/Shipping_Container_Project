@@ -19,11 +19,16 @@ The program takes user inputs such as **ASCII text-inputs**, **user-typed commen
 
 ![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/9baa42ed-92f1-4087-80f2-7bf88b6c72de)
 
-The image above describes how the manifest file format looks, this is the input taken by the program. The grid is a visual represenation of what the manifest represents.
+The image above describes how the manifest file format looks, this is the input taken by the program. The grid is a visual represenation of the manifest's contents .
 
 # Offloading
+The program handles **offloading** by prompting the user to type the names of the containers to *offload*. The program will then optimize the typed names, and select an optimal order to *offload* the containers.
 
-test
+We have an example of the ***Offloading*** feature below:
+
+## Offloading : Example
+
+
 
 # Onloading
 The program handles **onloading** by calculating an optimal path to onload the shipping container requested from the shipping dock to the nearest available ship coordinate.
