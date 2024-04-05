@@ -1,5 +1,19 @@
-# Project Overview
 This project is a collaboration between users: @Antheagao and @danmrt. This project was created for our ***Project in CS: Artificial Intelligent Systems***. 
+
+---
+- [Project Overview](#project-overview)
+- [Inputs](#inputs)
+- [Balancing](#balancing)
+  - [Balancing Example](#balancing--example)
+- [Unloading](#unloading)
+  - [Unloading Example](#unloading--example)
+- [Loading](#loading)
+  - [Loading Example](#loading--example)
+- [Log File](#log-file)
+  - [Log File Example](#log-file--example)
+---
+
+# Project Overview
 
 Our project entails a program, ran on an IDE, that provides the optimal order of operations to *load*/*unload* and *balance* shipping containers on a ship. 
 
