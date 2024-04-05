@@ -21,10 +21,37 @@ The program takes user inputs such as **ASCII text-inputs**, **user-typed commen
 
 The image above describes how the manifest file format looks, this is the input taken by the program. The grid is a visual represenation of the manifest's contents .
 
+# Balancing
+
+The program handles **balancing** by illustrating a visual to help aid the user. The visual also notes where the containers need to be moved to, and an approximation of the time it will take to complete all movements.
+
+The *balancing* feature is able to balance the weight of the containers in accordance with Martitime Law.
+
+An example of the **balancing** feature is below:
+
+## Balancing : Example
+
+Upon compilation of the program, it will ask for *user sign-in*, and then request the manifest .txt file.
+
+Once entered, the program (in ASCII text art) visualizes the manifest .txt file into a visual representation of the ship's containers on-board.
+
+![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/b35524f2-84bc-48dd-8e05-b5e7c78039f2)
+
+For this example, the program tells the user to move the container located at coordinates [8,5] to [2,3] (destination of where container goes is denoted by an *X*).
+
+Once the container is moved to the appropriate location, the program asks the user to confirm the movement by continuing (typing 1 to continue).
+
+![image](https://github.com/Antheagao/Shipping_Container_Project/assets/91440304/69f7f572-1388-4710-bf03-e86b1a8569b5)
+
+Once all containers are moved, the ship is now balanced. The program prompts the user to confirm reading the message that they will be required to send the new updated manifest file to the Captain.
+
+The balancing feature is now done.
+
 # Unloading
+
 The program handles **unloading** by prompting the user to type the names of the containers to *unload*. The program will then optimize the typed names, and select an optimal order to *unload* the containers.
 
-We have an example of the ***unloading*** feature below:
+An example of the ***unloading*** feature is below:
 
 ## Unloading : Example
 
